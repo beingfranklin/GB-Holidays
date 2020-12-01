@@ -58,27 +58,28 @@ initialiseDB = do
 -- This function will insert the holiday records into the database
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
+  let xs = records -- need to use records and produce xs, this seems easiest possibility
   xs' <- filter (dateNotInDB conn) (nub xs)
   stmt <- prepare conn "INSERT INTO holidays (date,localName,name,golbal) VALUES (?,?,?,?)"
   putStrLn "Adding"
-  mapM_ (\x -> putStrLn $ " - " ++ x) xs'
-  executeMany stmt (map (\x -> [toSql x, toSql (0 :: int)]) xs')
+  let xs'' = mapM_ (\x -> putStrLn $ " - " ++ x) xs'
+  executeMany stmt (map (\x -> [toSql x, toSql (0 :: int)]) xs'')
   commit conn
 
 -- This function will select all the holidays of a given country
-queryDB :: String -> IO [String]
-queryDB countryCode = do
+queryDB :: Connection -> String -> IO [[SqlValue]]
+queryDB conn countryCode = do
   res <- quickQuery' conn "SELECT localName FROM country_holidays WHERE counryCode =(?)" [toSql countryCode]
   return res
 
 --This function will select all the holidays in the date specified of a given country
-querySQ :: String -> IO [int]
-querySQ date = do
+querySQ :: Connection -> String -> IO Bool
+querySQ conn date = do
   res <- quickQuery' conn "SELECT localName FROM holidays WHERE date BETWEEN'1-JAN-20'AND'31-JUL-20'"[toSql date]
   return (length res == 0)
 
 -- This function will call all the names on the database.
-getNAMEs :: Connection -> IO [name]
+-- getNAMEs :: Connection -> IO [Name]
 getNAMEs conn = do
   res <- quickQuery' conn "SELECT name FROM holidays" []
   return $ map fromSql (map head res)
@@ -110,3 +111,5 @@ saveHolidayRecord records conn = do
   commit conn
   
 dateNotInDB = undefined  
+
+nub = undefined
