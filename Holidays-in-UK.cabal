@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: af0c2359af91ae75db8f4d705f2d0ed9d16eddf1b5472935a70773c59cb319e8
+-- hash: 45b9398751a1b0c271cbbfcca74e88d178ac02b62e4ed9f1ee705c3513e394a8
 
 name:           Holidays-in-UK
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Database
       Http
       Parse
   other-modules:
@@ -34,7 +35,9 @@ library
   hs-source-dirs:
       src
   build-depends:
-      aeson
+      HDBC
+    , HDBC-sqlite3
+    , aeson
     , base >=4.7 && <5
     , bytestring
     , http-conduit
@@ -48,7 +51,9 @@ executable Holidays-in-UK-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      Holidays-in-UK
+      HDBC
+    , HDBC-sqlite3
+    , Holidays-in-UK
     , aeson
     , base >=4.7 && <5
     , bytestring
@@ -64,7 +69,9 @@ test-suite Holidays-in-UK-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      Holidays-in-UK
+      HDBC
+    , HDBC-sqlite3
+    , Holidays-in-UK
     , aeson
     , base >=4.7 && <5
     , bytestring

@@ -1,9 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Parse
-    ( parse,
-    HolidayRecord
-    ) where
+module Parse where
 
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as L8
@@ -28,9 +25,10 @@ data HolidayRecord = HolidayRecord {
     localName :: String,
     name :: String,
     countryCode :: String,
-    fixed :: Bool
+    global::Bool
 } deriving (Show, Generic)
-    
+
+
 instance FromJSON HolidayRecord
 instance ToJSON HolidayRecord
 
@@ -43,4 +41,3 @@ instance ToJSON HolidayRecord
 
 parse :: L8.ByteString -> Either String [HolidayRecord]
 parse json = eitherDecode json :: Either String [HolidayRecord]
-
