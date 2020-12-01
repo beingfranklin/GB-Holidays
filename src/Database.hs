@@ -56,7 +56,7 @@ initialiseDB = do
 -- storeHolidays conn xs = do
 
 
--- This function will insert the holiday records into the database
+-- This function will insert the holiday records into the database majeed
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
   let xs = records -- need to use records and produce xs, this seems easiest possibility
