@@ -60,11 +60,11 @@ initialiseDB = do
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
   let xs = records -- need to use records and produce xs, this seems easiest possibility
-  xs' <- filter (dateNotInDB conn) (nub xs)
-  stmt <- prepare conn "INSERT INTO holidays (date,localName,name,golbal) VALUES (?,?,?,?)"
+  -- xs' <- filter (dateNotInDB conn) (nub xs)
+  stmt <- prepare conn "INSERT INTO holidays (date,localName,name,global) VALUES (?,?,?,?)"
   putStrLn "Adding"
-  let xs'' = mapM_ (\x -> putStrLn $ " - " ++ x) xs'
-  executeMany stmt (map (\x -> [toSql x, toSql (0 :: int)]) xs'')
+  -- let xs'' = mapM_ (\x -> putStrLn $ " - " ++ x) xs'
+  executeMany stmt (map (\x -> [toSql (date x), toSql (localName x), toSql (name x), toSql (global x)]) xs)
   commit conn
 
 -- This function will select all the holidays of a given country
@@ -80,7 +80,7 @@ querySQ conn date = do
   return (length res == 0)
 
 -- This function will call all the names on the database.
-getNAMEs :: Connection -> IO [Name]
+getNAMEs :: Connection -> IO [String]
 getNAMEs conn = do
   res <- quickQuery' conn "SELECT name FROM holidays" []
   return $ map fromSql (map head res)
