@@ -19,7 +19,7 @@ main = do
                     -- Right recs -> print . (take 5) $ (HolidayRecord recs)
                     print "Saving on DB"
                     conn <- initialiseDB
-                    -- saveHolidayRecord (recs) conn
+                    saveHolidayRecord (recs) conn
                     print "Done!"
 
         -- P.S It Outputs the haskell datatype we specified

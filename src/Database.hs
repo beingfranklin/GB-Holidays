@@ -84,6 +84,7 @@ querySQ conn date = do
 getNAMEs conn = do
   res <- quickQuery' conn "SELECT name FROM holidays" []
   return $ map fromSql (map head res)
+-}
 
 recordToSqlValues :: HolidayRecord -> [SqlValue]
 recordToSqlValues holidays =
@@ -99,19 +100,19 @@ holidayToSqlValues countries =
   ]
 
 prepareInsertRecordStmt :: Connection -> IO Statement
-prepareInsertRecordStmt conn = prepare conn "INSERT INTO records VALUES (?,?)"
-
+prepareInsertRecordStmt conn = prepare conn "INSERT INTO holidays VALUES (?,?)"
+{- 
 prepareInsertHolidayStmt conn = prepare conn "INSERT INTO holiday VALUES (?,?,?)"
 
 prepareInsertGlobalStmt conn = prepare conn "INSERT INTO country_holidays VALUES (?,?,?)"
-
+-}
 saveHolidayRecord :: [HolidayRecord] -> Connection -> IO ()
 saveHolidayRecord records conn = do
   stmt <- prepareInsertRecordStmt conn
   executeMany stmt (map recordToSqlValues records)
   commit conn
   
--}  
+  
   
 dateNotInDB = undefined  
 
