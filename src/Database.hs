@@ -55,6 +55,7 @@ initialiseDB = do
 -- storeHolidays _ [] = return ()
 -- storeHolidays conn xs = do
 
+{- 
 -- This function will insert the holiday records into the database
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
@@ -109,6 +110,8 @@ saveHolidayRecord records conn = do
   stmt <- prepareInsertRecordStmt conn
   executeMany stmt (map recordToSqlValues records)
   commit conn
+  
+-}  
   
 dateNotInDB = undefined  
 
