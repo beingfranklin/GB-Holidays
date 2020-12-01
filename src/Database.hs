@@ -59,7 +59,7 @@ initialiseDB = do
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
   xs' <- filter (dateNotInDB conn) (nub xs)
-  stmt <- prepare conn "INSERT INTO hoildays (date,localName,name,golbal) VALUES (?,?,?,?)"
+  stmt <- prepare conn "INSERT INTO holidays (date,localName,name,golbal) VALUES (?,?,?,?)"
   putStrLn "Adding"
   mapM_ (\x -> putStrLn $ " - " ++ x) xs'
   executeMany stmt (map (\x -> [toSql x, toSql (0 :: int)]) xs')
@@ -108,3 +108,5 @@ saveHolidayRecord records conn = do
   stmt <- prepareInsertRecordStmt conn
   executeMany stmt (map recordToSqlValues records)
   commit conn
+  
+dateNotInDB = undefined  
