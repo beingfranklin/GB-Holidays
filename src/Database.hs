@@ -55,7 +55,7 @@ initialiseDB = do
 -- storeHolidays _ [] = return ()
 -- storeHolidays conn xs = do
 
-{- 
+
 -- This function will insert the holiday records into the database
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
@@ -80,11 +80,11 @@ querySQ conn date = do
   return (length res == 0)
 
 -- This function will call all the names on the database.
--- getNAMEs :: Connection -> IO [Name]
+getNAMEs :: Connection -> IO [Name]
 getNAMEs conn = do
   res <- quickQuery' conn "SELECT name FROM holidays" []
   return $ map fromSql (map head res)
--}
+
 
 recordToSqlValues :: HolidayRecord -> [SqlValue]
 recordToSqlValues holidays =
@@ -111,9 +111,7 @@ saveHolidayRecord records conn = do
   stmt <- prepareInsertRecordStmt conn
   executeMany stmt (map recordToSqlValues records)
   commit conn
-  
-  
-  
+
 dateNotInDB = undefined  
 
 nub = undefined
