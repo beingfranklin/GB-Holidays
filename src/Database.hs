@@ -14,8 +14,6 @@ import Database.HDBC
   )
 import Database.HDBC.Sqlite3 (Connection, connectSqlite3)
 import Parse
-  ( HolidayRecord (countryCode, date, global, localName, name),
-  )
 
 -- This is a function that creates the tables
 -- if the tables do not exists yet
@@ -56,7 +54,7 @@ initialiseDB = do
 -- storeHolidays conn xs = do
 
 
--- This function will insert the holiday records into the database majeed
+-- This function will insert the holiday records into the database 
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
   let xs = records -- need to use records and produce xs, this seems easiest possibility
@@ -66,6 +64,24 @@ insertDB conn records = do
   -- let xs'' = mapM_ (\x -> putStrLn $ " - " ++ x) xs'
   executeMany stmt (map (\x -> [toSql (date x), toSql (localName x), toSql (name x), toSql (global x)]) xs)
   commit conn
+
+-- This function will insert the country records into the dsatabase
+insertLB :: Connection -> [CountryRecord] -> IO ()
+insertLB conn records = do
+    let xs = records 
+    stmt <- prepare conn "INSERT INTO countries (countryCode) VALUES (?)"
+    putStrLn "Adding"
+    executeMany stmt (map (\x -> [toSql (countryCode' x)]) xs)
+    commit conn
+
+-- This function will insert the country_holidays records into the dsatabase
+insertSB :: Connection -> [Country_holidaysRecord] -> IO ()
+insertSB conn records = do 
+    let xs = records 
+    stmt <- prepare conn "INSERT INTO country_holidays (countryCode,locaName) VALUES (?,?)"
+    putStrLn "Adding"
+    executeMany stmt (map (\x -> [toSql (countryCode'' x), toSql (localName' x)]) xs)
+    commit conn
 
 -- This function will select all the holidays of a given country
 queryDB :: Connection -> String -> IO [[SqlValue]]
