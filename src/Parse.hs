@@ -2,9 +2,9 @@
 
 module Parse where
 
-import Data.Aeson
+import Data.Aeson ( eitherDecode, FromJSON, ToJSON )
 import qualified Data.ByteString.Lazy.Char8 as L8
-import GHC.Generics
+import GHC.Generics ( Generic )
 
 -- -- Sample format
 -- [

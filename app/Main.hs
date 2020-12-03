@@ -10,7 +10,7 @@ main = do
     print "Downloading..."
     json <- download url
     print "Parsing"
-    case (parse json) of
+    case parse json of
           Left err -> print err
           -- Print first record
           Right recs -> do 
@@ -24,8 +24,6 @@ main = do
                     insertLB conn recs  
                     print "Done!"
                     res <- queryDB conn "GB"
-                    print $ "Number of rows is "++(show $ length res)
-                    
-
-        -- P.S It Outputs the haskell datatype we specified
+                    -- putStr $ show res
+                    print $ "Number of rows is " ++ show (length res)
 

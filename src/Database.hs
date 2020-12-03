@@ -85,9 +85,11 @@ insertSB conn records = do
 
 -- This function will select all the holidays of a given country
 queryDB :: Connection -> String -> IO [[SqlValue]]
-queryDB conn countryCode = do
-  res <- quickQuery' conn "SELECT localName FROM country_holidays WHERE countryCode =(?)" [toSql countryCode]
-  return res
+queryDB conn countryCode = 
+  do quickQuery'
+       conn
+       "SELECT localName FROM country_holidays WHERE countryCode =(?)"
+       [toSql countryCode]
 
 --This function will select all the holidays in the date specified of a given country
 querySQ :: Connection -> String -> IO Bool
@@ -95,13 +97,14 @@ querySQ conn date = do
   let d1 = "31-JUL-20"
   let d2 = "1-JAN-20"
   res <- quickQuery' conn "SELECT localName FROM holidays WHERE date BETWEEN (?) AND (?)" [toSql date]
-  return (length res == 0)
+  return (null res)
 
 -- This function will call all the names on the database.
 getNAMEs :: Connection -> IO [String]
 getNAMEs conn = do
   res <- quickQuery' conn "SELECT name FROM holidays" []
-  return $ map fromSql (map head res)
+  -- return $ map fromSql (map head res)
+  return $ map (fromSql . head) res
 
 
 recordToSqlValues :: HolidayRecord -> [SqlValue]
