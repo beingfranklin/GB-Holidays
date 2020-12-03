@@ -28,9 +28,21 @@ data HolidayRecord = HolidayRecord {
     global::Bool
 } deriving (Show, Generic)
 
+-- data CountriesRecord = CountriesRecord {
+--     countryCode' :: String,
+--      global::Bool
+-- } deriving (Show, Generic)
+
+-- data Country_holidaysRecord = Country_holidaysRecord {
+--     countryCode'' :: String,
+--     localName' :: String
+-- } deriving (Show, Generic)
 
 instance FromJSON HolidayRecord
 instance ToJSON HolidayRecord
+
+
+
 
 -- data OuterRecords = OuterRecords{
 --     records :: [InnerRecord]

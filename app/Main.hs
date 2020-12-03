@@ -20,7 +20,10 @@ main = do
                     print "Saving on DB"
                     conn <- initialiseDB
                     insertDB conn recs 
+                    insertSB conn recs
+                    insertLB conn recs  
                     print "Done!"
+                    
 
         -- P.S It Outputs the haskell datatype we specified
 
