@@ -28,8 +28,13 @@ data HolidayRecord = HolidayRecord {
     global::Bool
 } deriving (Show, Generic)
 
+
 -- data CountryRecord = CountryRecord {
 --     countryCode' :: String
+
+-- data CountriesRecord = CountriesRecord {
+--     countryCode' :: String,
+--      global::Bool
 -- } deriving (Show, Generic)
 
 -- data Country_holidaysRecord = Country_holidaysRecord {
@@ -39,13 +44,6 @@ data HolidayRecord = HolidayRecord {
 
 instance FromJSON HolidayRecord
 instance ToJSON HolidayRecord
-
--- data OuterRecords = OuterRecords{
---     records :: [InnerRecord]
--- }deriving (Show, Generic)
-
--- instance FromJSON OuterRecords
--- instance ToJSON OuterRecords
 
 parse :: L8.ByteString -> Either String [HolidayRecord]
 parse json = eitherDecode json :: Either String [HolidayRecord]
