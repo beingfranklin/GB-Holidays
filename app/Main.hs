@@ -24,7 +24,7 @@ main = do
                     insertLB conn recs  
                     print "Done!"
                     res <- queryDB conn "GB"
-                    print $ length res
+                    print $ "Number of rows is "++(show $ length res)
                     
 
         -- P.S It Outputs the haskell datatype we specified
