@@ -23,6 +23,8 @@ main = do
                     insertSB conn recs
                     insertLB conn recs  
                     print "Done!"
+                    res <- queryDB conn "GB"
+                    print $ length res
                     
 
         -- P.S It Outputs the haskell datatype we specified

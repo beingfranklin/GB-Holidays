@@ -86,7 +86,7 @@ insertSB conn records = do
 -- This function will select all the holidays of a given country
 queryDB :: Connection -> String -> IO [[SqlValue]]
 queryDB conn countryCode = do
-  res <- quickQuery' conn "SELECT localName FROM country_holidays WHERE counryCode =(?)" [toSql countryCode]
+  res <- quickQuery' conn "SELECT localName FROM country_holidays WHERE countryCode =(?)" [toSql countryCode]
   return res
 
 --This function will select all the holidays in the date specified of a given country
