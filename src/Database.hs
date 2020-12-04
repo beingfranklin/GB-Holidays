@@ -53,7 +53,6 @@ initialiseDB = do
 -- storeHolidays _ [] = return ()
 -- storeHolidays conn xs = do
 
-
 -- This function will insert the holiday records into the database
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
@@ -68,28 +67,29 @@ insertDB conn records = do
 -- This function will insert the country records into the dsatabase
 insertLB :: Connection -> [HolidayRecord] -> IO ()
 insertLB conn records = do
-    let xs = records
-    stmt <- prepare conn "INSERT INTO countries (countryCode,global) VALUES (?,?)"
-    putStrLn "Adding"
-    executeMany stmt (map (\x -> [toSql (countryCode x), toSql (global x)]) xs)
-    commit conn
+  let xs = records
+  stmt <- prepare conn "INSERT INTO countries (countryCode,global) VALUES (?,?)"
+  putStrLn "Adding"
+  executeMany stmt (map (\x -> [toSql (countryCode x), toSql (global x)]) xs)
+  commit conn
 
 -- This function will insert the country_holidays records into the dsatabase
 insertSB :: Connection -> [HolidayRecord] -> IO ()
 insertSB conn records = do
-    let xs = records
-    stmt <- prepare conn "INSERT INTO country_holidays (countryCode,localName) VALUES (?,?)"
-    putStrLn "Adding"
-    executeMany stmt (map (\x -> [toSql (countryCode x), toSql (localName x)]) xs)
-    commit conn
+  let xs = records
+  stmt <- prepare conn "INSERT INTO country_holidays (countryCode,localName) VALUES (?,?)"
+  putStrLn "Adding"
+  executeMany stmt (map (\x -> [toSql (countryCode x), toSql (localName x)]) xs)
+  commit conn
 
 -- This function will select all the holidays of a given country
 queryDB :: Connection -> String -> IO [[SqlValue]]
-queryDB conn countryCode = 
-  do quickQuery'
-       conn
-       "SELECT localName FROM country_holidays WHERE countryCode =(?)"
-       [toSql countryCode]
+queryDB conn countryCode =
+  do
+    quickQuery'
+      conn
+      "SELECT localName FROM country_holidays WHERE countryCode =(?)"
+      [toSql countryCode]
 
 --This function will select all the holidays in the date specified of a given country
 querySQ :: Connection -> String -> IO Bool
@@ -106,7 +106,6 @@ getNAMEs conn = do
   -- return $ map fromSql (map head res)
   return $ map (fromSql . head) res
 
-
 recordToSqlValues :: HolidayRecord -> [SqlValue]
 recordToSqlValues holidays =
   [ toSql $ date holidays,
@@ -117,9 +116,8 @@ recordToSqlValues holidays =
 holidayToSqlValues :: HolidayRecord -> [SqlValue]
 holidayToSqlValues countries =
   [ toSql $ countryCode countries,
-      toSql $ global countries
+    toSql $ global countries
   ]
-
 
 prepareInsertRecordStmt :: Connection -> IO Statement
 prepareInsertRecordStmt conn = prepare conn "INSERT INTO holidays VALUES (?,?)"
@@ -127,18 +125,23 @@ prepareInsertRecordStmt conn = prepare conn "INSERT INTO holidays VALUES (?,?)"
 prepareSelectRecordStma :: Connection -> IO Statement
 prepareSelectRecordStma conn = prepare conn "SELECT FROM Country_holidays VALUES (?,?)"
 
-
 saveHolidayRecord :: [HolidayRecord] -> Connection -> IO ()
 saveHolidayRecord records conn = do
-       stmt <- prepareInsertRecordStmt conn
-       executeMany stmt (map recordToSqlValues records)
-       commit conn
+  stmt <- prepareInsertRecordStmt conn
+  executeMany stmt (map recordToSqlValues records)
+  commit conn
+
 savecountriesRecord :: [HolidayRecord] -> Connection -> IO ()
 savecountriesRecord record conn = do
-       stma <- prepareSelectRecordStma conn
-       executeMany stma (map recordToSqlValues record)
-       commit conn
+  stma <- prepareSelectRecordStma conn
+  executeMany stma (map recordToSqlValues record)
+  commit conn
 
-dateNotInDB = undefined
+-- sqlRowToLine :: [[SqlValue]] ->  String
+-- sqlRowToLine row = 
+--   map (fromSql :: SqlValue -> String)
 
-nub = undefined
+sqlRowToString :: [[SqlValue]] ->  [String]
+sqlRowToString xs = map (fromSql :: SqlValue -> String) (concat xs)
+
+
