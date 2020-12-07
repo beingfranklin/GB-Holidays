@@ -15,9 +15,6 @@ import GHC.Generics ( Generic )
 --     "countryCode": "GB",
 --     "fixed": false,
 --     "global": true,
---     "counties": null,
---     "launchYear": null,
---     "type": "Public"
 --   }
 --   ]
 data HolidayRecord = HolidayRecord {
@@ -25,7 +22,8 @@ data HolidayRecord = HolidayRecord {
     localName :: String,
     name :: String,
     countryCode :: String,
-    global::Bool
+    global::Bool,
+    fixed::Bool
 } deriving (Show, Generic)
 
 

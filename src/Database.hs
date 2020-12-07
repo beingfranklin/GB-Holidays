@@ -31,7 +31,8 @@ initialiseDB = do
     "CREATE TABLE IF NOT EXISTS countries (\
     \ id INTEGER PRIMARY KEY NOT NULL,\
     \ countryCode VARCHAR(40) NOT NULL, \
-    \ global BOOL DEFAULT NULL \
+    \ global BOOL DEFAULT NULL, \
+    \ fixed BOOL DEFAULT NULL \
     \)"
     []
   commit conn
@@ -49,11 +50,9 @@ initialiseDB = do
 -- | This function will insert the holiday records into the database
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
-  let xs = records -- need to use records and produce xs, this seems easiest possibility
-  -- xs' <- filter (dateNotInDB conn) (nub xs)
+  let xs = records 
   stmt <- prepare conn "INSERT INTO holidays (date,localName,name) VALUES (?,?,?)"
   putStrLn "Adding"
-  -- let xs'' = mapM_ (\x -> putStrLn $ " - " ++ x) xs'
   executeMany stmt (map (\x -> [toSql (date x), toSql (localName x), toSql (name x)]) xs)
   commit conn
 
@@ -61,9 +60,9 @@ insertDB conn records = do
 insertLB :: Connection -> [HolidayRecord] -> IO ()
 insertLB conn records = do
   let xs = records
-  stmt <- prepare conn "INSERT INTO countries (countryCode,global) VALUES (?,?)"
+  stmt <- prepare conn "INSERT INTO countries (countryCode,global,fixed) VALUES (?,?,?)"
   putStrLn "Adding"
-  executeMany stmt (map (\x -> [toSql (countryCode x), toSql (global x)]) xs)
+  executeMany stmt (map (\x -> [toSql (countryCode x), toSql (global x), toSql (fixed x)]) xs)
   commit conn
 
 -- | This function will insert the country_holidays records into the dsatabase
@@ -102,8 +101,6 @@ getLocalNames conn isGlobal = do
   res <-
     quickQuery'
       conn
-      -- "SELECT country_holidays.localName, countries.global  FROM country_holidays \
-      -- \ INNER JOIN countries ON country_holidays.countryCode=countries.countryCode WHERE countries.global=true "
       "SELECT country_holidays.localName FROM country_holidays \
       \INNER JOIN countries \
       \ON countries.id = country_holidays.id \
@@ -121,7 +118,8 @@ recordToSqlValues holidays =
 holidayToSqlValues :: HolidayRecord -> [SqlValue]
 holidayToSqlValues countries =
   [ toSql $ countryCode countries,
-    toSql $ global countries
+    toSql $ global countries,
+    toSql $ fixed countries
   ]
 
 prepareInsertRecordStmt :: Connection -> IO Statement

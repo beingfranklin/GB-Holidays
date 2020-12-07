@@ -48,7 +48,7 @@ main = do
       let converRes = sqlRowToString res
       mapM_ putStrLn converRes
       putStrLn "\n****************"
-      -- TODO JSON Conversion code is below
+      -- TODO - JSON Conversion code is below
       -- sqlValue <- getUnprocessedSQLHolidays conn
       -- print $ show sqlValue
       -- print "Done!"
