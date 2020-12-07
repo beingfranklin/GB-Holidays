@@ -35,6 +35,10 @@ main = do
                     let converRes = sqlRowToString res
                     mapM_ putStrLn converRes
                     putStrLn "\n****************"
+                    sqlValue <- getUnprocessedSQLHolidays conn 
+                    print $ show sqlValue
+                    print "Done!"
+                    putStrLn "\n****************"
                     putStrLn $ "Number of rows is " ++ show (length res)
 
                     

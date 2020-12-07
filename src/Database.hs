@@ -144,4 +144,20 @@ savecountriesRecord record conn = do
 sqlRowToString :: [[SqlValue]] ->  [String]
 sqlRowToString xs = map (fromSql :: SqlValue -> String) (concat xs)
 
+-- |Method to retrieve all the SQLs on the database.
+getUnprocessedSQLHolidays :: Connection -> IO [(String, String, String)]
+getUnprocessedSQLHolidays conn = do
+   res <- quickQuery' conn "SELECT date, localName, name FROM holidays" []
+   return $ map ( \xs -> ( fromSql (xs!!0), fromSql (xs!!1), fromSql (xs!!2) )) res
+
+getUnprocessedSQLCountries :: Connection -> IO [(String, Bool)]
+getUnprocessedSQLCountries conn = do
+   res <- quickQuery' conn "SELECT countryCode, global FROM countries" []
+   return $ map ( \xs -> ( fromSql (xs!!0), fromSql (xs!!1) )) res
+
+getUnprocessedSQLCH :: Connection -> IO [(String, String)]
+getUnprocessedSQLCH conn = do
+   res <- quickQuery' conn "SELECT countryCode, localName FROM country_holidays" []
+   return $ map ( \xs -> ( fromSql (xs!!0), fromSql (xs!!1) )) res
+
 
