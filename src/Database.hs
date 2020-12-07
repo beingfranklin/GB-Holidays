@@ -92,12 +92,12 @@ queryDB conn countryCode =
       [toSql countryCode]
 
 --This function will select all the holidays in the date specified of a given country
-querySQ :: Connection -> String -> IO Bool
-querySQ conn date = do
-  let d1 = "31-JUL-20"
-  let d2 = "1-JAN-20"
-  res <- quickQuery' conn "SELECT localName FROM holidays WHERE date BETWEEN (?) AND (?)" [toSql date]
-  return (null res)
+selectHolidaysInDateRange :: Connection -> String -> String -> IO [String]
+selectHolidaysInDateRange conn startDate endDate = do
+  --let d1 = "31-JUL-20"
+  --let d2 = "1-JAN-20"
+  res <- quickQuery' conn "SELECT localName FROM holidays WHERE date BETWEEN (?) AND (?)" [toSql startDate, toSql endDate]
+  return $ map fromSql $ concat $ res
 
 -- This function will call all the names on the database.
 getNAMEs :: Connection -> IO [String]
