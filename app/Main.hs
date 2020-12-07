@@ -51,4 +51,8 @@ main = do
       print $ show sqlValue
       print "Done!"
       putStrLn "\n****************"
+      print "Date"
+      dateSort <- selectHolidaysInDateRange conn "1-JAN-20" "31-JUL-20"
+      print (concat dateSort)
+      putStrLn "\n****************"
       putStrLn $ "Number of rows is " ++ show (length res)

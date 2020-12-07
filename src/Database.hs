@@ -1,9 +1,4 @@
 module Database where
-
---{initialiseDB,
---saveRecords
---}
-
 import Database.HDBC
   ( IConnection (commit, prepare, run),
     SqlValue,
@@ -15,8 +10,8 @@ import Database.HDBC
 import Database.HDBC.Sqlite3 (Connection, connectSqlite3)
 import Parse
 
--- This is a function that creates the tables
--- if the tables do not exists yet
+-- |This is a function that creates the tables
+-- |if the tables do not exists yet
 initialiseDB :: IO Connection
 initialiseDB = do
   conn <- connectSqlite3 "HolidayRecord.sqlite"
@@ -47,13 +42,7 @@ initialiseDB = do
   commit conn
   return conn
 
--- storeHolidays :: Connection
---              -> [date] -- ^ List of date to be stored on the database
---              -> IO ()
--- storeHolidays _ [] = return ()
--- storeHolidays conn xs = do
-
--- This function will insert the holiday records into the database
+-- |This function will insert the holiday records into the database
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
   let xs = records -- need to use records and produce xs, this seems easiest possibility
@@ -64,7 +53,7 @@ insertDB conn records = do
   executeMany stmt (map (\x -> [toSql (date x), toSql (localName x), toSql (name x)]) xs)
   commit conn
 
--- This function will insert the country records into the dsatabase
+-- |This function will insert the country records into the dsatabase
 insertLB :: Connection -> [HolidayRecord] -> IO ()
 insertLB conn records = do
   let xs = records
@@ -73,7 +62,7 @@ insertLB conn records = do
   executeMany stmt (map (\x -> [toSql (countryCode x), toSql (global x)]) xs)
   commit conn
 
--- This function will insert the country_holidays records into the dsatabase
+-- |This function will insert the country_holidays records into the dsatabase
 insertSB :: Connection -> [HolidayRecord] -> IO ()
 insertSB conn records = do
   let xs = records
@@ -82,7 +71,7 @@ insertSB conn records = do
   executeMany stmt (map (\x -> [toSql (countryCode x), toSql (localName x)]) xs)
   commit conn
 
--- This function will select all the holidays of a given country
+-- |This function will select all the holidays of a given country
 queryDB :: Connection -> String -> IO [[SqlValue]]
 queryDB conn countryCode =
   do
@@ -91,15 +80,15 @@ queryDB conn countryCode =
       "SELECT localName FROM country_holidays WHERE countryCode =(?)"
       [toSql countryCode]
 
---This function will select all the holidays in the date specified of a given country
+-- |This function will select all the holidays in the date specified of a given country
 selectHolidaysInDateRange :: Connection -> String -> String -> IO [String]
 selectHolidaysInDateRange conn startDate endDate = do
   --let d1 = "31-JUL-20"
   --let d2 = "1-JAN-20"
   res <- quickQuery' conn "SELECT localName FROM holidays WHERE date BETWEEN (?) AND (?)" [toSql startDate, toSql endDate]
-  return $ map fromSql $ concat $ res
+  return $ map fromSql $ concat res
 
--- This function will call all the names on the database.
+-- |This function will call all the names on the database.
 getNAMEs :: Connection -> IO [String]
 getNAMEs conn = do
   res <- quickQuery' conn "SELECT name FROM holidays" []
@@ -136,10 +125,6 @@ savecountriesRecord record conn = do
   stma <- prepareSelectRecordStma conn
   executeMany stma (map recordToSqlValues record)
   commit conn
-
--- sqlRowToLine :: [[SqlValue]] ->  String
--- sqlRowToLine row = 
---   map (fromSql :: SqlValue -> String)
 
 sqlRowToString :: [[SqlValue]] ->  [String]
 sqlRowToString xs = map (fromSql :: SqlValue -> String) (concat xs)
