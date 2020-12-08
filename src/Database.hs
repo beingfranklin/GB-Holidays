@@ -144,7 +144,7 @@ sqlRowToString :: [[SqlValue]] -> [String]
 sqlRowToString xs = map (fromSql :: SqlValue -> String) (concat xs)
 
 -- | Method to retrieve all the SQLs on the database.
-getUnprocessedSQLHolidays :: Connection -> IO [(String, String, String, String, Bool, Bool)]
+getUnprocessedSQLHolidays :: Connection -> IO [HolidayRecord]
 getUnprocessedSQLHolidays conn = do
   res <-
     quickQuery'
@@ -154,17 +154,8 @@ getUnprocessedSQLHolidays conn = do
       \WHERE countries.id=holidays.id \
       \ORDER BY countries.id ASC"
       []
-  return $ map (\xs -> (fromSql (xs !! 0), fromSql (xs !! 1), fromSql (xs !! 2), fromSql (xs !! 3), fromSql (xs !! 4), fromSql (xs !! 5))) res
+  return $ map (\xs -> HolidayRecord(fromSql (xs !! 0)) (fromSql (xs !! 1)) (fromSql (xs !! 2)) (fromSql (xs !! 3)) (fromSql (xs !! 4)) (fromSql (xs !! 5))) res
 
-getUnprocessedSQLCountries :: Connection -> IO [(String, Bool)]
-getUnprocessedSQLCountries conn = do
-  res <- quickQuery' conn "SELECT countryCode, global FROM countries" []
-  return $ map (\xs -> (fromSql (xs !! 0), fromSql (xs !! 1))) res
-
-getUnprocessedSQLCH :: Connection -> IO [(String, String)]
-getUnprocessedSQLCH conn = do
-  res <- quickQuery' conn "SELECT countryCode, localName FROM country_holidays" []
-  return $ map (\xs -> (fromSql (xs !! 0), fromSql (xs !! 1))) res
 
 -- | Validations
 

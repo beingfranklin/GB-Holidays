@@ -74,19 +74,21 @@ main = do
         'n' -> do
           names<- getLocalNames conn False
           print $ show names
-        _ -> syntaxErrorGlobal
+        _ -> syntaxErrorForIsGlobal
       putStrLn "\n****************"
       putStrLn $ "Number of rows in Table is " ++ show (length res)
       putStrLn "\n****************"
       -- TODO - JSON Conversion code is below
       sqlValue <- getUnprocessedSQLHolidays conn
       print $ show sqlValue
+      -- TOJSON Conversion should be added below
+      
       print "Done!"
       putStrLn "\n****************"
 
 
-syntaxErrorGlobal :: IO ()
-syntaxErrorGlobal = putStrLn 
+syntaxErrorForIsGlobal :: IO ()
+syntaxErrorForIsGlobal = putStrLn 
       "Invalid Input\n\
       \\n\
       \Please either enter Y or N\n"
