@@ -144,10 +144,17 @@ sqlRowToString :: [[SqlValue]] -> [String]
 sqlRowToString xs = map (fromSql :: SqlValue -> String) (concat xs)
 
 -- | Method to retrieve all the SQLs on the database.
-getUnprocessedSQLHolidays :: Connection -> IO [(String, String, String)]
+getUnprocessedSQLHolidays :: Connection -> IO [(String, String, String, String, Bool, Bool)]
 getUnprocessedSQLHolidays conn = do
-  res <- quickQuery' conn "SELECT date, localName, name FROM holidays" []
-  return $ map (\xs -> (fromSql (xs !! 0), fromSql (xs !! 1), fromSql (xs !! 2))) res
+  res <-
+    quickQuery'
+      conn
+      "SELECT holidays.date, holidays.localName, holidays.name, countries.countryCode, countries.global, countries.fixed FROM holidays \
+      \INNER JOIN countries \
+      \WHERE countries.id=holidays.id \
+      \ORDER BY countries.id ASC"
+      []
+  return $ map (\xs -> (fromSql (xs !! 0), fromSql (xs !! 1), fromSql (xs !! 2), fromSql (xs !! 3), fromSql (xs !! 4), fromSql (xs !! 5))) res
 
 getUnprocessedSQLCountries :: Connection -> IO [(String, Bool)]
 getUnprocessedSQLCountries conn = do

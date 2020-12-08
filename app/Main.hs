@@ -48,11 +48,6 @@ main = do
       let converRes = sqlRowToString res
       mapM_ putStrLn converRes
       putStrLn "\n****************"
-      -- TODO - JSON Conversion code is below
-      -- sqlValue <- getUnprocessedSQLHolidays conn
-      -- print $ show sqlValue
-      -- print "Done!"
-      -- putStrLn "\n****************"
       putStrLn "\nSee the holidays between specific dates... "
       putStrLn "\nInput the start date [DD-MMM-YY] "
       startDate <- getLine
@@ -82,6 +77,12 @@ main = do
         _ -> syntaxErrorGlobal
       putStrLn "\n****************"
       putStrLn $ "Number of rows in Table is " ++ show (length res)
+      putStrLn "\n****************"
+      -- TODO - JSON Conversion code is below
+      sqlValue <- getUnprocessedSQLHolidays conn
+      print $ show sqlValue
+      print "Done!"
+      putStrLn "\n****************"
 
 
 syntaxErrorGlobal :: IO ()
