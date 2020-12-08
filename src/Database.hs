@@ -8,6 +8,9 @@ import Database.HDBC
     quickQuery',
     toSql,
   )
+import qualified Data.ByteString.Lazy.Char8 as L8
+-- import qualified Data.Map as Map
+
 import Database.HDBC.Sqlite3 (Connection, connectSqlite3)
 import Parse
 
@@ -157,5 +160,9 @@ getUnprocessedSQLHolidays conn = do
   return $ map (\xs -> HolidayRecord(fromSql (xs !! 0)) (fromSql (xs !! 1)) (fromSql (xs !! 2)) (fromSql (xs !! 3)) (fromSql (xs !! 4)) (fromSql (xs !! 5))) res
 
 
--- | Validations
+encode :: ToJSON a => a -> L8.ByteString
 
+convertToJSON :: Connection -> IO
+convertToJSON conn = do
+  res <- getUnprocessedSQLHolidays conn
+  return encode res

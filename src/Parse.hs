@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 module Parse where
 
@@ -30,9 +29,6 @@ data HolidayRecord = HolidayRecord
 
 instance FromJSON HolidayRecord
 instance ToJSON HolidayRecord 
--- where
---   toJSON (HolidayRecord date localName name countryCode global fixed) =
---     object ["date" .= date, "localName" .= localName, "name" .= name, "countryCode" .= countryCode, "global" .= global, "fixed" .= fixed]
 
 parse :: L8.ByteString -> Either String [HolidayRecord]
 parse json = eitherDecode json :: Either String [HolidayRecord]

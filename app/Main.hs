@@ -79,10 +79,10 @@ main = do
       putStrLn $ "Number of rows in Table is " ++ show (length res)
       putStrLn "\n****************"
       -- TODO - JSON Conversion code is below
-      sqlValue <- getUnprocessedSQLHolidays conn
+      sqlValue <- convertToJSON conn
       print $ show sqlValue
       -- TOJSON Conversion should be added below
-      
+
       print "Done!"
       putStrLn "\n****************"
 
