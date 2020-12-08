@@ -81,8 +81,8 @@ main = do
       -- TODO - JSON Conversion code is below
       jsonValue <- convertToJSON conn
       print $ show jsonValue
-      -- TOJSON Conversion -> writing into file should be added below
-      -- I.writeFile "DB.json" jsonValue
+      -- TODO - JSON Conversion -> writing into file should be added below
+      -- writeFile "DB.json" jsonValue
       print "Done!"
       putStrLn "\n****************"
 
