@@ -82,7 +82,7 @@ main = do
       jsonValue <- convertToJSON conn
       print $ show jsonValue
       -- TODO - JSON Conversion -> writing into file should be added below
-      -- writeFile "DB.json" jsonValue
+      writeFile "DB.json" (jsonValue)
       print "Done!"
       putStrLn "\n****************"
 

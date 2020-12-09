@@ -14,6 +14,8 @@ import qualified Data.ByteString.Lazy.Char8 as L8
 import Database.HDBC.Sqlite3 (Connection, connectSqlite3)
 import Parse
 
+import Data.Aeson
+
 -- | This is a function that creates the tables
 --  |if the tables do not exists yet
 initialiseDB :: IO Connection
@@ -160,9 +162,9 @@ getUnprocessedSQLHolidays conn = do
   return $ map (\xs -> HolidayRecord(fromSql (xs !! 0)) (fromSql (xs !! 1)) (fromSql (xs !! 2)) (fromSql (xs !! 3)) (fromSql (xs !! 4)) (fromSql (xs !! 5))) res
 
 
-encode :: ToJSON a => a -> L8.ByteString
+-- encode :: ToJSON a => a -> L8.ByteString
 
-convertToJSON :: Connection -> IO
+convertToJSON :: Connection -> IO String
 convertToJSON conn = do
   res <- getUnprocessedSQLHolidays conn
-  return encode res
+  return $ L8.unpack ( encode res)
