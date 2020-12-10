@@ -1,5 +1,5 @@
 
-<h3 align="center">Holidays in UK</h3>
+<h3 align="center">Public Holidays of the World</h3>
 <div align="center">
 
 
@@ -25,7 +25,7 @@ stack build
 ## Run the program
 
 ```
-stack exec Holidays-in-UK-exe 
+stack exec Public-Holidays-of-the-World-exe 
 ```
 
 ## Haddock Document generation

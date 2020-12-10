@@ -4,14 +4,14 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 45b9398751a1b0c271cbbfcca74e88d178ac02b62e4ed9f1ee705c3513e394a8
+-- hash: e44f6949fdb02191c3f646ad4dbf8d9363dc594e06ee417c6289af27b63057ad
 
-name:           Holidays-in-UK
+name:           Public-Holidays-of-the-World
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/Holidays-in-UK#readme>
-homepage:       https://github.com/githubuser/Holidays-in-UK#readme
-bug-reports:    https://github.com/githubuser/Holidays-in-UK/issues
-author:         Author name here
+description:    Please see the README on GitHub at <https://github.com/githubuser/Public-Holidays-of-the-World#readme>
+homepage:       https://github.com/githubuser/Public-Holidays-of-the-World#readme
+bug-reports:    https://github.com/githubuser/Public-Holidays-of-the-World/issues
+author:         Franklin Antony
 maintainer:     example@example.com
 copyright:      2020 Author name here
 license:        BSD3
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/Holidays-in-UK
+  location: https://github.com/githubuser/Public-Holidays-of-the-World
 
 library
   exposed-modules:
@@ -31,7 +31,7 @@ library
       Http
       Parse
   other-modules:
-      Paths_Holidays_in_UK
+      Paths_Public_Holidays_of_the_World
   hs-source-dirs:
       src
   build-depends:
@@ -43,35 +43,35 @@ library
     , http-conduit
   default-language: Haskell2010
 
-executable Holidays-in-UK-exe
+executable Public-Holidays-of-the-World-exe
   main-is: Main.hs
   other-modules:
-      Paths_Holidays_in_UK
+      Paths_Public_Holidays_of_the_World
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       HDBC
     , HDBC-sqlite3
-    , Holidays-in-UK
+    , Public-Holidays-of-the-World
     , aeson
     , base >=4.7 && <5
     , bytestring
     , http-conduit
   default-language: Haskell2010
 
-test-suite Holidays-in-UK-test
+test-suite Public-Holidays-of-the-World-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_Holidays_in_UK
+      Paths_Public_Holidays_of_the_World
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       HDBC
     , HDBC-sqlite3
-    , Holidays-in-UK
+    , Public-Holidays-of-the-World
     , aeson
     , base >=4.7 && <5
     , bytestring

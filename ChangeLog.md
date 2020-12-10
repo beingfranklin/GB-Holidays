@@ -1,3 +1,3 @@
-# Changelog for Holidays-in-UK
+# Changelog for Public-Holidays-of-the-World
 
 ## Unreleased changes
