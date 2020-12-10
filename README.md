@@ -11,7 +11,7 @@
 ---
 
 <p align="center"> 
-Haskell record for GB Holidays build on nager.at API
+Program for viewing and processing Public Holidays of different countries built on date.nager.at API
 <br> 
 </p>
 
