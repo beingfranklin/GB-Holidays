@@ -68,6 +68,7 @@ main = do
           names<- getLocalNames conn False
           putStrLn $ unlines names
         _ -> syntaxErrorForIsGlobal
+      -- TODO More Query
       putStrLn $ "\nPreparing to write into the JSON file "
       putStrLn "\nWriting ..."
       jsonValue <- convertToJSON conn

@@ -16,12 +16,20 @@ Haskell record for GB Holidays build on nager.at API
 </p>
 
 
-
-## How to compile and run the program
+## Build the program
 
 ```
 stack build
 ```
+
+## Run the program
+
 ```
 stack exec Holidays-in-UK-exe 
+```
+
+## Haddock Document generation
+
+```
+stack haddock
 ```
