@@ -4,8 +4,11 @@ import Database
 import Http
 import Parse
 
+-- | This is the main function of the program to download, parse and process public holidays of differnet countries of the world
 main :: IO ()
 main = do
+  putStrLn "\nPublic Holidays of the World\n\
+  \____________________________________________"
   putStrLn "\n[CountryCode] - Country Codes available\n\
     \AU        Australia\n\
     \BR        Brazil\n\
@@ -35,50 +38,117 @@ main = do
       insertDB conn recs
       insertSB conn recs
       insertLB conn recs
-      res <- queryDB conn countryCodeInput
-      putStrLn $ "\nTotal List of Holidays in " ++ countryCodeInput ++ " in the calendar year "++ yearInput
-      let converRes = sqlRowToString res
-      mapM_ putStrLn converRes
-      putStrLn "\nSee the holidays between specific dates... "
-      putStrLn "\nInput the start date [DD-MMM-YY] "
-      startDate <- getLine
-      putStrLn "\nInput the end date [DD-MMM-YY] "
-      endDate <- getLine
-      dateSort <- selectHolidaysInDateRange conn startDate endDate
-      putStrLn $ "\nHolidays between " ++startDate ++ " and " ++ endDate ++ " are : \n"
-      -- TODO Format the dates
-      mapM_ putStrLn $ dateSort
-      putStrLn $ "\nDo you want to see International or Local holidays in " ++ countryCodeInput ++" ?\nType Y for global and N for local -"
-      inputGlobal <- getChar
-      case inputGlobal of
-        'Y'  -> do
-          putStrLn  "\nInternational Holidays are : \n"
-          names<- getLocalNames conn True
-          putStrLn $ unlines names
-        'y' -> do
-          putStrLn  "\nInternational Holidays are : \n"
-          names<- getLocalNames conn True
-          putStrLn $ unlines names
-        'N' -> do
-          putStrLn  "\nLocal Holidays are : \n"
-          names<- getLocalNames conn False
-          putStrLn $ unlines names
-        'n' -> do
-          putStrLn  "\nLocal Holidays are : \n"
-          names<- getLocalNames conn False
-          putStrLn $ unlines names
-        _ -> syntaxErrorForIsGlobal
-      -- TODO More Query
-      
+      putStrLn "\nSaved!\n"
+
+      putStrLn "\nMain Menu (Choose the options)\n\
+      \____________________________________________\n\
+      \A -  Show all the public holidays saved on DB \n\
+      \B -  Show the public holiday between two dates\n\
+      \C -  Show the International/Local public holidays in the \n\
+      \\n Input your option - \n"
+      menuInput <- getLine
+      case menuInput of
+        "A" -> do
+          res <- queryDB conn countryCodeInput
+          putStrLn $ "\nAll the public holidays in " ++ countryCodeInput ++ " in the calendar year "++ yearInput
+          let converRes = sqlRowToString res
+          mapM_ putStrLn converRes
+        "a" -> do
+          res <- queryDB conn countryCodeInput
+          putStrLn $ "\nAll the public holidays in " ++ countryCodeInput ++ " in the calendar year "++ yearInput
+          let converRes = sqlRowToString res
+          mapM_ putStrLn converRes
+        "B" -> do
+          putStrLn "\nSee the holidays between specific dates... "
+          putStrLn "\nInput the start date [DD-MMM-YY] "
+          startDate <- getLine
+          putStrLn "\nInput the end date [DD-MMM-YY] "
+          endDate <- getLine
+          dateSort <- selectHolidaysInDateRange conn startDate endDate
+          putStrLn $ "\nHolidays between " ++startDate ++ " and " ++ endDate ++ " are : \n"
+          mapM_ putStrLn dateSort
+        "b" -> do
+          putStrLn "\nSee the holidays between specific dates... "
+          putStrLn "\nInput the start date [DD-MMM-YY] "
+          startDate <- getLine
+          putStrLn "\nInput the end date [DD-MMM-YY] "
+          endDate <- getLine
+          dateSort <- selectHolidaysInDateRange conn startDate endDate
+          putStrLn $ "\nHolidays between " ++startDate ++ " and " ++ endDate ++ " are : \n"
+          mapM_ putStrLn dateSort
+        "C" -> do
+          putStrLn $ "\nDo you want to see International or Local holidays in " ++ countryCodeInput ++" ?\nType Y for global and N for local -"
+          inputGlobal <- getLine
+          case inputGlobal of
+            "Y"  -> do
+              putStrLn  "\nInternational Holidays are : \n"
+              names<- getLocalNames conn True
+              putStrLn $ unlines names
+            "y" -> do
+              putStrLn  "\nInternational Holidays are : \n"
+              names<- getLocalNames conn True
+              putStrLn $ unlines names
+            "N" -> do
+              putStrLn  "\nLocal Holidays are : \n"
+              names<- getLocalNames conn False
+              putStrLn $ unlines names
+            "n" -> do
+              putStrLn  "\nLocal Holidays are : \n"
+              names<- getLocalNames conn False
+              putStrLn $ unlines names
+            _ -> syntaxErrorForIsGlobal 
+        "c" -> do
+          putStrLn $ "\nDo you want to see International or Local holidays in " ++ countryCodeInput ++" ?\nType Y for global and N for local -"
+          inputGlobal <- getLine
+          case inputGlobal of
+            "Y"  -> do
+              putStrLn  "\nInternational Holidays are : \n"
+              names<- getLocalNames conn True
+              putStrLn $ unlines names
+            "y" -> do
+              putStrLn  "\nInternational Holidays are : \n"
+              names<- getLocalNames conn True
+              putStrLn $ unlines names
+            "N" -> do
+              putStrLn  "\nLocal Holidays are : \n"
+              names<- getLocalNames conn False
+              putStrLn $ unlines names
+            "n" -> do
+              putStrLn  "\nLocal Holidays are : \n"
+              names<- getLocalNames conn False
+              putStrLn $ unlines names
+            _ -> syntaxErrorForIsGlobal  
+        _ -> syntaxErrorForOptions 
       putStrLn "\nPreparing to write into the JSON file... "
       putStrLn "\nWriting ..."
       jsonValue <- convertToJSON conn
       writeFile "DB.json" jsonValue
       putStrLn "\nFinished Writing!"
+      putStrLn  "\nDo you want to exit the program?(Y/N)"
+      inputContinue <- getLine
+      case inputContinue of
+        "N" -> do
+          putStrLn  "\nReturning back to the program \n"
+          main
+        "n" -> do
+          putStrLn  "\nReturning back to the program \n"
+          main
+        _ -> syntaxErrorForExit
+      putStrLn  "\nExiting the program..."
 
-
+-- | This function is used to catch the invalid inputs in Is Global input
 syntaxErrorForIsGlobal :: IO ()
 syntaxErrorForIsGlobal = putStrLn 
       "Invalid Input for the holiday type\n\
       \\n\
       \Please either enter Y or N next time\n"
+
+-- | This function is used to catch the invalid inputs in Exit function
+syntaxErrorForExit :: IO ()
+syntaxErrorForExit = putStrLn 
+      "\nRecognised a Exit case or Invalid Input."
+
+-- | This function is used to catch the invalid inputs in Menu option function
+syntaxErrorForOptions :: IO ()
+syntaxErrorForOptions = putStrLn 
+      "\nInvalid Menu Option."

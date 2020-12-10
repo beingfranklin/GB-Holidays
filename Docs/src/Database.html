@@ -1,0 +1,541 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">-- |Database module header</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Database</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Database.HDBC</span></span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString.Lazy.Char8</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">L8</span></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Database.HDBC.Sqlite3</span></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Parse.html"><span class="hs-identifier">Parse</span></a></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span>
+</span><span id="line-9"></span><span>
+</span><span id="line-10"></span><span class="hs-comment">{--| 
+  Database.HDBC - Database.HDBC is an abstraction layer between Haskell programs 
+  parse - Imported parse library to make use of the record data type  
+  Data.Aeson -  
+  Database.HDBC.Sqlite3 - -}</span><span>
+</span><span id="line-15"></span><span>
+</span><span id="line-16"></span><span class="hs-comment">-- | This is a function is for initialising the database and to create the table if the tables do not exists yet</span><span>
+</span><span id="line-17"></span><span>
+</span><span id="line-18"></span><span class="annot"><a href="Database.html#initialiseDB"><span class="hs-identifier hs-type">initialiseDB</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span>
+</span><span id="line-19"></span><span id="initialiseDB"><span class="annot"><span class="annottext">initialiseDB :: IO Connection
+</span><a href="Database.html#initialiseDB"><span class="hs-identifier hs-var hs-var">initialiseDB</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-20"></span><span>    </span><span class="hs-comment">{--| ConnectSqlite3 takes a filePath and that performs as an IO action  
+      and then it returns a connection between that database file (conn)
+      The run function runs any statement that we have prepared as String 
+      it takes a connection, statement and some parameters 
+      then it will perform that action. -}</span><span>
+</span><span id="line-25"></span><span>  </span><span id="local-6989586621679141426"><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141426"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; IO Connection
+</span><span class="hs-identifier hs-var">connectSqlite3</span></span><span> </span><span class="annot"><span class="hs-string">&quot;HolidayRecord.sqlite&quot;</span></span><span>
+</span><span id="line-26"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; [SqlValue] -&gt; IO Integer
+forall conn.
+IConnection conn =&gt;
+conn -&gt; FilePath -&gt; [SqlValue] -&gt; IO Integer
+</span><span class="hs-identifier hs-var">run</span></span><span>
+</span><span id="line-27"></span><span>    </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141426"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-28"></span><span>    </span><span class="hs-comment">{--| Sql statement is created 3 tables 
+    holidays table has 4 fields
+     three of them are String and one is Integer -}</span><span>
+</span><span id="line-31"></span><span>    </span><span class="annot"><span class="hs-string">&quot;CREATE TABLE IF NOT EXISTS holidays (\
+    \ id INTEGER PRIMARY KEY NOT NULL,\
+    \ date VARCHAR(40) NOT NULL, \
+    \ localName VARCHAR(40) NOT NULL, \
+    \ name VARCHAR(40) NOT NULL \
+    \)&quot;</span></span><span>
+</span><span id="line-37"></span><span>    </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-38"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO ()
+forall conn. IConnection conn =&gt; conn -&gt; IO ()
+</span><span class="hs-identifier hs-var">commit</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141426"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-39"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; [SqlValue] -&gt; IO Integer
+forall conn.
+IConnection conn =&gt;
+conn -&gt; FilePath -&gt; [SqlValue] -&gt; IO Integer
+</span><span class="hs-identifier hs-var">run</span></span><span>
+</span><span id="line-40"></span><span>    </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141426"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-41"></span><span>    </span><span class="hs-comment">{--| The second table is countries which has two Boolean fields, one a String field and one an Integer field -}</span><span>
+</span><span id="line-42"></span><span>    </span><span class="annot"><span class="hs-string">&quot;CREATE TABLE IF NOT EXISTS countries (\
+    \ id INTEGER PRIMARY KEY NOT NULL,\
+    \ countryCode VARCHAR(40) NOT NULL, \
+    \ global BOOL DEFAULT NULL, \
+    \ fixed BOOL DEFAULT NULL \
+    \)&quot;</span></span><span>
+</span><span id="line-48"></span><span>    </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-49"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO ()
+forall conn. IConnection conn =&gt; conn -&gt; IO ()
+</span><span class="hs-identifier hs-var">commit</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141426"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-50"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; [SqlValue] -&gt; IO Integer
+forall conn.
+IConnection conn =&gt;
+conn -&gt; FilePath -&gt; [SqlValue] -&gt; IO Integer
+</span><span class="hs-identifier hs-var">run</span></span><span>
+</span><span id="line-51"></span><span>    </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141426"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-52"></span><span>    </span><span class="hs-comment">{--| The third table is country_holidays which has 2 Srting fields and one an Integer field.  -}</span><span>
+</span><span id="line-53"></span><span>    </span><span class="annot"><span class="hs-string">&quot;CREATE TABLE IF NOT EXISTS country_holidays (\
+    \ id INTEGER PRIMARY KEY NOT NULL,\
+    \ countryCode VARCHAR(40) DEFAULT NULL,\
+    \ localName VARCHAR(40) DEFAULT NULL \
+    \)&quot;</span></span><span>
+</span><span id="line-58"></span><span>    </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-59"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO ()
+forall conn. IConnection conn =&gt; conn -&gt; IO ()
+</span><span class="hs-identifier hs-var">commit</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141426"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-60"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO Connection
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141426"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-61"></span><span>
+</span><span id="line-62"></span><span>
+</span><span id="line-63"></span><span class="hs-comment">-- | This function will insert the holiday records into the database </span><span>
+</span><span id="line-64"></span><span class="annot"><a href="Database.html#insertDB"><span class="hs-identifier hs-type">insertDB</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span>
+</span><span id="line-65"></span><span id="insertDB"><span class="annot"><span class="annottext">insertDB :: Connection -&gt; [HolidayRecord] -&gt; IO ()
+</span><a href="Database.html#insertDB"><span class="hs-identifier hs-var hs-var">insertDB</span></a></span></span><span> </span><span id="local-6989586621679141421"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141421"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span id="local-6989586621679141420"><span class="annot"><span class="annottext">records :: [HolidayRecord]
+</span><a href="#local-6989586621679141420"><span class="hs-identifier hs-var">records</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-66"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679141419"><span class="annot"><span class="annottext">xs :: [HolidayRecord]
+</span><a href="#local-6989586621679141419"><span class="hs-identifier hs-var hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141420"><span class="hs-identifier hs-var">records</span></a></span><span> </span><span>
+</span><span id="line-67"></span><span>  </span><span id="local-6989586621679141418"><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141418"><span class="hs-identifier hs-var">stmt</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; IO Statement
+forall conn. IConnection conn =&gt; conn -&gt; FilePath -&gt; IO Statement
+</span><span class="hs-identifier hs-var">prepare</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141421"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;INSERT INTO holidays (date,localName,name) VALUES (?,?,?)&quot;</span></span><span> </span><span class="hs-comment">--  this fuction use to insert the values into the parameters under the holidays table</span><span>
+</span><span id="line-68"></span><span>  </span><span class="annot"><span class="annottext">Statement -&gt; [[SqlValue]] -&gt; IO ()
+</span><span class="hs-identifier hs-var hs-var">executeMany</span></span><span> </span><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141418"><span class="hs-identifier hs-var">stmt</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(HolidayRecord -&gt; [SqlValue]) -&gt; [HolidayRecord] -&gt; [[SqlValue]]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679141415"><span class="annot"><span class="annottext">x :: HolidayRecord
+</span><a href="#local-6989586621679141415"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#date"><span class="hs-identifier hs-var hs-var">date</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141415"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#localName"><span class="hs-identifier hs-var hs-var">localName</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141415"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#name"><span class="hs-identifier hs-var hs-var">name</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141415"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141419"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-comment">--  this function use for prepares a database operation and executes it against the parameters sequences</span><span>
+</span><span id="line-69"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO ()
+forall conn. IConnection conn =&gt; conn -&gt; IO ()
+</span><span class="hs-identifier hs-var">commit</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141421"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="hs-comment">--  this fuction to commit a transaction to the underlying database </span><span>
+</span><span id="line-70"></span><span>
+</span><span id="line-71"></span><span class="hs-comment">-- | This function will insert the country records into the dsatabase</span><span>
+</span><span id="line-72"></span><span class="annot"><a href="Database.html#insertLB"><span class="hs-identifier hs-type">insertLB</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span>
+</span><span id="line-73"></span><span id="insertLB"><span class="annot"><span class="annottext">insertLB :: Connection -&gt; [HolidayRecord] -&gt; IO ()
+</span><a href="Database.html#insertLB"><span class="hs-identifier hs-var hs-var">insertLB</span></a></span></span><span> </span><span id="local-6989586621679141409"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141409"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span id="local-6989586621679141408"><span class="annot"><span class="annottext">records :: [HolidayRecord]
+</span><a href="#local-6989586621679141408"><span class="hs-identifier hs-var">records</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-74"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679141407"><span class="annot"><span class="annottext">xs :: [HolidayRecord]
+</span><a href="#local-6989586621679141407"><span class="hs-identifier hs-var hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141408"><span class="hs-identifier hs-var">records</span></a></span><span>
+</span><span id="line-75"></span><span>  </span><span id="local-6989586621679141406"><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141406"><span class="hs-identifier hs-var">stmt</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; IO Statement
+forall conn. IConnection conn =&gt; conn -&gt; FilePath -&gt; IO Statement
+</span><span class="hs-identifier hs-var">prepare</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141409"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;INSERT INTO countries (countryCode,global,fixed) VALUES (?,?,?)&quot;</span></span><span> </span><span class="hs-comment">--  this fuction use to insert the values into the parameters under the country table</span><span>
+</span><span id="line-76"></span><span>  </span><span class="annot"><span class="annottext">Statement -&gt; [[SqlValue]] -&gt; IO ()
+</span><span class="hs-identifier hs-var hs-var">executeMany</span></span><span> </span><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141406"><span class="hs-identifier hs-var">stmt</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(HolidayRecord -&gt; [SqlValue]) -&gt; [HolidayRecord] -&gt; [[SqlValue]]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679141405"><span class="annot"><span class="annottext">x :: HolidayRecord
+</span><a href="#local-6989586621679141405"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#countryCode"><span class="hs-identifier hs-var hs-var">countryCode</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141405"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">HolidayRecord -&gt; Bool
+</span><a href="Parse.html#global"><span class="hs-identifier hs-var hs-var">global</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141405"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Bool -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">HolidayRecord -&gt; Bool
+</span><a href="Parse.html#fixed"><span class="hs-identifier hs-var hs-var">fixed</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141405"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141407"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-comment">--  this function use for prepares a database operation and executes it against the parameters sequences</span><span>
+</span><span id="line-77"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO ()
+forall conn. IConnection conn =&gt; conn -&gt; IO ()
+</span><span class="hs-identifier hs-var">commit</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141409"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="hs-comment">-- this fuction to commit a transaction to the underlying database</span><span>
+</span><span id="line-78"></span><span>
+</span><span id="line-79"></span><span class="hs-comment">-- | This function will insert the country_holidays records into the dsatabase</span><span>
+</span><span id="line-80"></span><span class="annot"><a href="Database.html#insertSB"><span class="hs-identifier hs-type">insertSB</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-81"></span><span id="insertSB"><span class="annot"><span class="annottext">insertSB :: Connection -&gt; [HolidayRecord] -&gt; IO ()
+</span><a href="Database.html#insertSB"><span class="hs-identifier hs-var hs-var">insertSB</span></a></span></span><span> </span><span id="local-6989586621679141400"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141400"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span id="local-6989586621679141399"><span class="annot"><span class="annottext">records :: [HolidayRecord]
+</span><a href="#local-6989586621679141399"><span class="hs-identifier hs-var">records</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-82"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679141398"><span class="annot"><span class="annottext">xs :: [HolidayRecord]
+</span><a href="#local-6989586621679141398"><span class="hs-identifier hs-var hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141399"><span class="hs-identifier hs-var">records</span></a></span><span>
+</span><span id="line-83"></span><span>  </span><span id="local-6989586621679141397"><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141397"><span class="hs-identifier hs-var">stmt</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; IO Statement
+forall conn. IConnection conn =&gt; conn -&gt; FilePath -&gt; IO Statement
+</span><span class="hs-identifier hs-var">prepare</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141400"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;INSERT INTO country_holidays (countryCode,localName) VALUES (?,?)&quot;</span></span><span> </span><span class="hs-comment">-- this fuction use to insert the values into the parameters under the country_holidays</span><span>
+</span><span id="line-84"></span><span>  </span><span class="annot"><span class="annottext">Statement -&gt; [[SqlValue]] -&gt; IO ()
+</span><span class="hs-identifier hs-var hs-var">executeMany</span></span><span> </span><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141397"><span class="hs-identifier hs-var">stmt</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(HolidayRecord -&gt; [SqlValue]) -&gt; [HolidayRecord] -&gt; [[SqlValue]]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679141396"><span class="annot"><span class="annottext">x :: HolidayRecord
+</span><a href="#local-6989586621679141396"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#countryCode"><span class="hs-identifier hs-var hs-var">countryCode</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141396"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#localName"><span class="hs-identifier hs-var hs-var">localName</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141396"><span class="hs-identifier hs-var">x</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141398"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-comment">--  this function use for prepares a database operation and executes it against the parameters sequences</span><span>
+</span><span id="line-85"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO ()
+forall conn. IConnection conn =&gt; conn -&gt; IO ()
+</span><span class="hs-identifier hs-var">commit</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141400"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="hs-comment">--  this function to commit a transaction to the underlying database</span><span>
+</span><span id="line-86"></span><span>
+</span><span id="line-87"></span><span class="hs-comment">-- | This function will select all the holidays of a given country</span><span>
+</span><span id="line-88"></span><span class="annot"><a href="Database.html#queryDB"><span class="hs-identifier hs-type">queryDB</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">SqlValue</span></span><span class="hs-special">]</span><span class="hs-special">]</span><span>
+</span><span id="line-89"></span><span id="queryDB"><span class="annot"><span class="annottext">queryDB :: Connection -&gt; FilePath -&gt; IO [[SqlValue]]
+</span><a href="Database.html#queryDB"><span class="hs-identifier hs-var hs-var">queryDB</span></a></span></span><span> </span><span id="local-6989586621679141393"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141393"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span id="local-6989586621679141392"><span class="annot"><span class="annottext">countryCode :: FilePath
+</span><a href="#local-6989586621679141392"><span class="hs-identifier hs-var">countryCode</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-90"></span><span>  </span><span class="hs-keyword">do</span><span>
+</span><span id="line-91"></span><span>    </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+forall conn.
+IConnection conn =&gt;
+conn -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+</span><span class="hs-identifier hs-var">quickQuery'</span></span><span> </span><span class="hs-comment">--  A quick way to do a query similar to preparing, executing.</span><span>
+</span><span id="line-92"></span><span>      </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141393"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-93"></span><span>      </span><span class="annot"><span class="hs-string">&quot;SELECT localName FROM country_holidays WHERE countryCode =(?)&quot;</span></span><span> </span><span class="hs-comment">--  this function will select specific parameter values </span><span>
+</span><span id="line-94"></span><span>      </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679141392"><span class="hs-identifier hs-var">countryCode</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-95"></span><span>
+</span><span id="line-96"></span><span class="hs-comment">-- | This function will select all the holidays in the date specified of a given country</span><span>
+</span><span id="line-97"></span><span class="annot"><a href="Database.html#selectHolidaysInDateRange"><span class="hs-identifier hs-type">selectHolidaysInDateRange</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">]</span><span> </span><span>
+</span><span id="line-98"></span><span id="selectHolidaysInDateRange"><span class="annot"><span class="annottext">selectHolidaysInDateRange :: Connection -&gt; FilePath -&gt; FilePath -&gt; IO [FilePath]
+</span><a href="Database.html#selectHolidaysInDateRange"><span class="hs-identifier hs-var hs-var">selectHolidaysInDateRange</span></a></span></span><span> </span><span id="local-6989586621679141389"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141389"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span id="local-6989586621679141388"><span class="annot"><span class="annottext">startDate :: FilePath
+</span><a href="#local-6989586621679141388"><span class="hs-identifier hs-var">startDate</span></a></span></span><span> </span><span id="local-6989586621679141387"><span class="annot"><span class="annottext">endDate :: FilePath
+</span><a href="#local-6989586621679141387"><span class="hs-identifier hs-var">endDate</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-99"></span><span>  </span><span id="local-6989586621679141386"><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141386"><span class="hs-identifier hs-var">res</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+forall conn.
+IConnection conn =&gt;
+conn -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+</span><span class="hs-identifier hs-var">quickQuery'</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141389"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;SELECT localName FROM holidays WHERE date BETWEEN (?) AND (?)&quot;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679141388"><span class="hs-identifier hs-var">startDate</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">FilePath
+</span><a href="#local-6989586621679141387"><span class="hs-identifier hs-var">endDate</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-comment">--  this function will select specific parameter values which was here specified between tow dates</span><span>
+</span><span id="line-100"></span><span>  </span><span class="annot"><span class="annottext">[FilePath] -&gt; IO [FilePath]
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="annot"><span class="annottext">([FilePath] -&gt; IO [FilePath]) -&gt; [FilePath] -&gt; IO [FilePath]
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(SqlValue -&gt; FilePath) -&gt; [SqlValue] -&gt; [FilePath]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">SqlValue -&gt; FilePath
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="annot"><span class="annottext">([SqlValue] -&gt; [FilePath]) -&gt; [SqlValue] -&gt; [FilePath]
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[[SqlValue]] -&gt; [SqlValue]
+forall (t :: * -&gt; *) a. Foldable t =&gt; t [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">concat</span></span><span> </span><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141386"><span class="hs-identifier hs-var">res</span></a></span><span> </span><span class="hs-comment">--  this function will return the selection result</span><span>
+</span><span id="line-101"></span><span>
+</span><span id="line-102"></span><span class="hs-comment">-- | This function will call all the names on the database.</span><span>
+</span><span id="line-103"></span><span class="annot"><a href="Database.html#getNames"><span class="hs-identifier hs-type">getNames</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">]</span><span>
+</span><span id="line-104"></span><span id="getNames"><span class="annot"><span class="annottext">getNames :: Connection -&gt; IO [FilePath]
+</span><a href="Database.html#getNames"><span class="hs-identifier hs-var hs-var">getNames</span></a></span></span><span> </span><span id="local-6989586621679141382"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141382"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-105"></span><span>  </span><span id="local-6989586621679141381"><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141381"><span class="hs-identifier hs-var">res</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+forall conn.
+IConnection conn =&gt;
+conn -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+</span><span class="hs-identifier hs-var">quickQuery'</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141382"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;SELECT name FROM holidays&quot;</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-comment">-- this function will select specific parameter values which are names</span><span>
+</span><span id="line-106"></span><span>  </span><span class="annot"><span class="annottext">[FilePath] -&gt; IO [FilePath]
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="annot"><span class="annottext">([FilePath] -&gt; IO [FilePath]) -&gt; [FilePath] -&gt; IO [FilePath]
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(SqlValue -&gt; FilePath) -&gt; [SqlValue] -&gt; [FilePath]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">SqlValue -&gt; FilePath
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="annot"><span class="annottext">([SqlValue] -&gt; [FilePath]) -&gt; [SqlValue] -&gt; [FilePath]
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[[SqlValue]] -&gt; [SqlValue]
+forall (t :: * -&gt; *) a. Foldable t =&gt; t [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">concat</span></span><span> </span><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141381"><span class="hs-identifier hs-var">res</span></a></span><span> </span><span class="hs-comment">--  this function will return the selection result</span><span>
+</span><span id="line-107"></span><span>
+</span><span id="line-108"></span><span class="hs-comment">-- | This function will call all the names on the database.</span><span>
+</span><span id="line-109"></span><span class="annot"><a href="Database.html#getLocalNames"><span class="hs-identifier hs-type">getLocalNames</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">]</span><span>
+</span><span id="line-110"></span><span id="getLocalNames"><span class="annot"><span class="annottext">getLocalNames :: Connection -&gt; Bool -&gt; IO [FilePath]
+</span><a href="Database.html#getLocalNames"><span class="hs-identifier hs-var hs-var">getLocalNames</span></a></span></span><span> </span><span id="local-6989586621679141379"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141379"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span id="local-6989586621679141378"><span class="annot"><span class="annottext">isGlobal :: Bool
+</span><a href="#local-6989586621679141378"><span class="hs-identifier hs-var">isGlobal</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-111"></span><span>  </span><span id="local-6989586621679141377"><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141377"><span class="hs-identifier hs-var">res</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><span id="line-112"></span><span>    </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+forall conn.
+IConnection conn =&gt;
+conn -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+</span><span class="hs-identifier hs-var">quickQuery'</span></span><span>
+</span><span id="line-113"></span><span>      </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141379"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-114"></span><span>      </span><span class="annot"><span class="hs-string">&quot;SELECT country_holidays.localName FROM country_holidays \
+      \INNER JOIN countries \
+      \ON countries.id = country_holidays.id \
+      \WHERE countries.global=(?)&quot;</span></span><span>
+</span><span id="line-118"></span><span>      </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Bool -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">Bool
+</span><a href="#local-6989586621679141378"><span class="hs-identifier hs-var">isGlobal</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-119"></span><span>  </span><span class="annot"><span class="annottext">[FilePath] -&gt; IO [FilePath]
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="annot"><span class="annottext">([FilePath] -&gt; IO [FilePath]) -&gt; [FilePath] -&gt; IO [FilePath]
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(SqlValue -&gt; FilePath) -&gt; [SqlValue] -&gt; [FilePath]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">SqlValue -&gt; FilePath
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="annot"><span class="annottext">([SqlValue] -&gt; [FilePath]) -&gt; [SqlValue] -&gt; [FilePath]
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[[SqlValue]] -&gt; [SqlValue]
+forall (t :: * -&gt; *) a. Foldable t =&gt; t [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">concat</span></span><span> </span><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141377"><span class="hs-identifier hs-var">res</span></a></span><span>
+</span><span id="line-120"></span><span>
+</span><span id="line-121"></span><span class="hs-comment">-- | This function is used to convert from Haskell datatypes to SQL datatypes toSql function used from HDBC to do the convert for all values to SQL in the database</span><span>
+</span><span id="line-122"></span><span class="annot"><a href="Database.html#recordToSqlValues"><span class="hs-identifier hs-type">recordToSqlValues</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">SqlValue</span></span><span class="hs-special">]</span><span>
+</span><span id="line-123"></span><span id="recordToSqlValues"><span class="annot"><span class="annottext">recordToSqlValues :: HolidayRecord -&gt; [SqlValue]
+</span><a href="Database.html#recordToSqlValues"><span class="hs-identifier hs-var hs-var">recordToSqlValues</span></a></span></span><span> </span><span id="local-6989586621679141375"><span class="annot"><span class="annottext">holidays :: HolidayRecord
+</span><a href="#local-6989586621679141375"><span class="hs-identifier hs-var">holidays</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-124"></span><span>  </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; SqlValue) -&gt; FilePath -&gt; SqlValue
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#date"><span class="hs-identifier hs-var hs-var">date</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141375"><span class="hs-identifier hs-var">holidays</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-125"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; SqlValue) -&gt; FilePath -&gt; SqlValue
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#localName"><span class="hs-identifier hs-var hs-var">localName</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141375"><span class="hs-identifier hs-var">holidays</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-126"></span><span>    </span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; SqlValue) -&gt; FilePath -&gt; SqlValue
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#name"><span class="hs-identifier hs-var hs-var">name</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141375"><span class="hs-identifier hs-var">holidays</span></a></span><span>
+</span><span id="line-127"></span><span>  </span><span class="hs-special">]</span><span>
+</span><span id="line-128"></span><span>
+</span><span id="line-129"></span><span class="hs-comment">-- | This function is used to convert from Haskell datatypes to SQL datatypes toSql function used from HDBC to do the convert for all values to SQL in the database</span><span>
+</span><span id="line-130"></span><span class="annot"><a href="Database.html#holidayToSqlValues"><span class="hs-identifier hs-type">holidayToSqlValues</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">SqlValue</span></span><span class="hs-special">]</span><span>
+</span><span id="line-131"></span><span id="holidayToSqlValues"><span class="annot"><span class="annottext">holidayToSqlValues :: HolidayRecord -&gt; [SqlValue]
+</span><a href="Database.html#holidayToSqlValues"><span class="hs-identifier hs-var hs-var">holidayToSqlValues</span></a></span></span><span> </span><span id="local-6989586621679141373"><span class="annot"><span class="annottext">countries :: HolidayRecord
+</span><a href="#local-6989586621679141373"><span class="hs-identifier hs-var">countries</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-132"></span><span>  </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">FilePath -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; SqlValue) -&gt; FilePath -&gt; SqlValue
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">HolidayRecord -&gt; FilePath
+</span><a href="Parse.html#countryCode"><span class="hs-identifier hs-var hs-var">countryCode</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141373"><span class="hs-identifier hs-var">countries</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-133"></span><span>    </span><span class="annot"><span class="annottext">Bool -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">(Bool -&gt; SqlValue) -&gt; Bool -&gt; SqlValue
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">HolidayRecord -&gt; Bool
+</span><a href="Parse.html#global"><span class="hs-identifier hs-var hs-var">global</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141373"><span class="hs-identifier hs-var">countries</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-134"></span><span>    </span><span class="annot"><span class="annottext">Bool -&gt; SqlValue
+forall a. Convertible a SqlValue =&gt; a -&gt; SqlValue
+</span><span class="hs-identifier hs-var">toSql</span></span><span> </span><span class="annot"><span class="annottext">(Bool -&gt; SqlValue) -&gt; Bool -&gt; SqlValue
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">HolidayRecord -&gt; Bool
+</span><a href="Parse.html#fixed"><span class="hs-identifier hs-var hs-var">fixed</span></a></span><span> </span><span class="annot"><span class="annottext">HolidayRecord
+</span><a href="#local-6989586621679141373"><span class="hs-identifier hs-var">countries</span></a></span><span>
+</span><span id="line-135"></span><span>  </span><span class="hs-special">]</span><span>
+</span><span id="line-136"></span><span>
+</span><span id="line-137"></span><span class="hs-comment">-- | This function performs an action (ie. to insert the values into holidays)</span><span>
+</span><span id="line-138"></span><span>
+</span><span id="line-139"></span><span class="annot"><a href="Database.html#prepareInsertRecordStmt"><span class="hs-identifier hs-type">prepareInsertRecordStmt</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Statement</span></span><span>
+</span><span id="line-140"></span><span id="prepareInsertRecordStmt"><span class="annot"><span class="annottext">prepareInsertRecordStmt :: Connection -&gt; IO Statement
+</span><a href="Database.html#prepareInsertRecordStmt"><span class="hs-identifier hs-var hs-var">prepareInsertRecordStmt</span></a></span></span><span> </span><span id="local-6989586621679141371"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141371"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; IO Statement
+forall conn. IConnection conn =&gt; conn -&gt; FilePath -&gt; IO Statement
+</span><span class="hs-identifier hs-var">prepare</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141371"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;INSERT INTO holidays VALUES (?,?)&quot;</span></span><span>
+</span><span id="line-141"></span><span>
+</span><span id="line-142"></span><span class="hs-comment">-- |This function performs an action (ie. to fetch the values from holidays)</span><span>
+</span><span id="line-143"></span><span>
+</span><span id="line-144"></span><span class="annot"><a href="Database.html#prepareSelectRecordStma"><span class="hs-identifier hs-type">prepareSelectRecordStma</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Statement</span></span><span>
+</span><span id="line-145"></span><span id="prepareSelectRecordStma"><span class="annot"><span class="annottext">prepareSelectRecordStma :: Connection -&gt; IO Statement
+</span><a href="Database.html#prepareSelectRecordStma"><span class="hs-identifier hs-var hs-var">prepareSelectRecordStma</span></a></span></span><span> </span><span id="local-6989586621679141369"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141369"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; IO Statement
+forall conn. IConnection conn =&gt; conn -&gt; FilePath -&gt; IO Statement
+</span><span class="hs-identifier hs-var">prepare</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141369"><span class="hs-identifier hs-var">conn</span></a></span><span> </span><span class="annot"><span class="hs-string">&quot;SELECT FROM Country_holidays VALUES (?,?)&quot;</span></span><span>
+</span><span id="line-146"></span><span>
+</span><span id="line-147"></span><span class="hs-comment">-- |Thus function for saving all the records into the database passing the executeMany function in HDBC library  then execute a list of lists of values and it preforms an action which dose not return anything it just preforms that sql statement</span><span>
+</span><span id="line-148"></span><span class="annot"><a href="Database.html#saveHolidayRecord"><span class="hs-identifier hs-type">saveHolidayRecord</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-149"></span><span id="saveHolidayRecord"><span class="annot"><span class="annottext">saveHolidayRecord :: [HolidayRecord] -&gt; Connection -&gt; IO ()
+</span><a href="Database.html#saveHolidayRecord"><span class="hs-identifier hs-var hs-var">saveHolidayRecord</span></a></span></span><span> </span><span id="local-6989586621679141367"><span class="annot"><span class="annottext">records :: [HolidayRecord]
+</span><a href="#local-6989586621679141367"><span class="hs-identifier hs-var">records</span></a></span></span><span> </span><span id="local-6989586621679141366"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141366"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-150"></span><span>  </span><span id="local-6989586621679141365"><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141365"><span class="hs-identifier hs-var">stmt</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; IO Statement
+</span><a href="Database.html#prepareInsertRecordStmt"><span class="hs-identifier hs-var">prepareInsertRecordStmt</span></a></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141366"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-151"></span><span>  </span><span class="annot"><span class="annottext">Statement -&gt; [[SqlValue]] -&gt; IO ()
+</span><span class="hs-identifier hs-var hs-var">executeMany</span></span><span> </span><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141365"><span class="hs-identifier hs-var">stmt</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(HolidayRecord -&gt; [SqlValue]) -&gt; [HolidayRecord] -&gt; [[SqlValue]]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">HolidayRecord -&gt; [SqlValue]
+</span><a href="Database.html#recordToSqlValues"><span class="hs-identifier hs-var">recordToSqlValues</span></a></span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141367"><span class="hs-identifier hs-var">records</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-152"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO ()
+forall conn. IConnection conn =&gt; conn -&gt; IO ()
+</span><span class="hs-identifier hs-var">commit</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141366"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-153"></span><span>
+</span><span id="line-154"></span><span class="hs-comment">-- | This function saves the country record</span><span>
+</span><span id="line-155"></span><span class="annot"><a href="Database.html#savecountriesRecord"><span class="hs-identifier hs-type">savecountriesRecord</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-156"></span><span id="savecountriesRecord"><span class="annot"><span class="annottext">savecountriesRecord :: [HolidayRecord] -&gt; Connection -&gt; IO ()
+</span><a href="Database.html#savecountriesRecord"><span class="hs-identifier hs-var hs-var">savecountriesRecord</span></a></span></span><span> </span><span id="local-6989586621679141363"><span class="annot"><span class="annottext">record :: [HolidayRecord]
+</span><a href="#local-6989586621679141363"><span class="hs-identifier hs-var">record</span></a></span></span><span> </span><span id="local-6989586621679141362"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141362"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-157"></span><span>  </span><span id="local-6989586621679141361"><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141361"><span class="hs-identifier hs-var">stma</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; IO Statement
+</span><a href="Database.html#prepareSelectRecordStma"><span class="hs-identifier hs-var">prepareSelectRecordStma</span></a></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141362"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-158"></span><span>  </span><span class="annot"><span class="annottext">Statement -&gt; [[SqlValue]] -&gt; IO ()
+</span><span class="hs-identifier hs-var hs-var">executeMany</span></span><span> </span><span class="annot"><span class="annottext">Statement
+</span><a href="#local-6989586621679141361"><span class="hs-identifier hs-var">stma</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(HolidayRecord -&gt; [SqlValue]) -&gt; [HolidayRecord] -&gt; [[SqlValue]]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="annot"><span class="annottext">HolidayRecord -&gt; [SqlValue]
+</span><a href="Database.html#recordToSqlValues"><span class="hs-identifier hs-var">recordToSqlValues</span></a></span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141363"><span class="hs-identifier hs-var">record</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-159"></span><span>  </span><span class="annot"><span class="annottext">Connection -&gt; IO ()
+forall conn. IConnection conn =&gt; conn -&gt; IO ()
+</span><span class="hs-identifier hs-var">commit</span></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141362"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-160"></span><span>
+</span><span id="line-161"></span><span class="hs-comment">-- | This function converts into Row into the string</span><span>
+</span><span id="line-162"></span><span>
+</span><span id="line-163"></span><span class="annot"><a href="Database.html#sqlRowToString"><span class="hs-identifier hs-type">sqlRowToString</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">SqlValue</span></span><span class="hs-special">]</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">]</span><span>
+</span><span id="line-164"></span><span id="sqlRowToString"><span class="annot"><span class="annottext">sqlRowToString :: [[SqlValue]] -&gt; [FilePath]
+</span><a href="Database.html#sqlRowToString"><span class="hs-identifier hs-var hs-var">sqlRowToString</span></a></span></span><span> </span><span id="local-6989586621679141359"><span class="annot"><span class="annottext">xs :: [[SqlValue]]
+</span><a href="#local-6989586621679141359"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(SqlValue -&gt; FilePath) -&gt; [SqlValue] -&gt; [FilePath]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SqlValue -&gt; FilePath
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">SqlValue</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[[SqlValue]] -&gt; [SqlValue]
+forall (t :: * -&gt; *) a. Foldable t =&gt; t [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">concat</span></span><span> </span><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141359"><span class="hs-identifier hs-var">xs</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-165"></span><span>
+</span><span id="line-166"></span><span class="hs-comment">-- | This function is to retrieve all the SQLs on the database</span><span>
+</span><span id="line-167"></span><span class="annot"><a href="Database.html#getUnprocessedSQLHolidays"><span class="hs-identifier hs-type">getUnprocessedSQLHolidays</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-168"></span><span id="getUnprocessedSQLHolidays"><span class="annot"><span class="annottext">getUnprocessedSQLHolidays :: Connection -&gt; IO [HolidayRecord]
+</span><a href="Database.html#getUnprocessedSQLHolidays"><span class="hs-identifier hs-var hs-var">getUnprocessedSQLHolidays</span></a></span></span><span> </span><span id="local-6989586621679141357"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141357"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-169"></span><span>  </span><span id="local-6989586621679141356"><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141356"><span class="hs-identifier hs-var">res</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span>
+</span><span id="line-170"></span><span>    </span><span class="annot"><span class="annottext">Connection -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+forall conn.
+IConnection conn =&gt;
+conn -&gt; FilePath -&gt; [SqlValue] -&gt; IO [[SqlValue]]
+</span><span class="hs-identifier hs-var">quickQuery'</span></span><span>
+</span><span id="line-171"></span><span>      </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141357"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-172"></span><span>      </span><span class="annot"><span class="hs-string">&quot;SELECT holidays.date, holidays.localName, holidays.name, countries.countryCode, countries.global, countries.fixed FROM holidays \
+      \INNER JOIN countries \
+      \WHERE countries.id=holidays.id \
+      \ORDER BY countries.id ASC&quot;</span></span><span>
+</span><span id="line-176"></span><span>      </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-177"></span><span>  </span><span class="annot"><span class="annottext">[HolidayRecord] -&gt; IO [HolidayRecord]
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="annot"><span class="annottext">([HolidayRecord] -&gt; IO [HolidayRecord])
+-&gt; [HolidayRecord] -&gt; IO [HolidayRecord]
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">([SqlValue] -&gt; HolidayRecord) -&gt; [[SqlValue]] -&gt; [HolidayRecord]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679141355"><span class="annot"><span class="annottext">xs :: [SqlValue]
+</span><a href="#local-6989586621679141355"><span class="hs-identifier hs-var">xs</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">FilePath
+-&gt; FilePath
+-&gt; FilePath
+-&gt; FilePath
+-&gt; Bool
+-&gt; Bool
+-&gt; HolidayRecord
+</span><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-var">HolidayRecord</span></a></span><span class="hs-special">(</span><span class="annot"><span class="annottext">SqlValue -&gt; FilePath
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[SqlValue]
+</span><a href="#local-6989586621679141355"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">[SqlValue] -&gt; Int -&gt; SqlValue
+forall a. [a] -&gt; Int -&gt; a
+</span><span class="hs-operator hs-var">!!</span></span><span> </span><span class="annot"><span class="hs-number">0</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SqlValue -&gt; FilePath
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[SqlValue]
+</span><a href="#local-6989586621679141355"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">[SqlValue] -&gt; Int -&gt; SqlValue
+forall a. [a] -&gt; Int -&gt; a
+</span><span class="hs-operator hs-var">!!</span></span><span> </span><span class="annot"><span class="hs-number">1</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SqlValue -&gt; FilePath
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[SqlValue]
+</span><a href="#local-6989586621679141355"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">[SqlValue] -&gt; Int -&gt; SqlValue
+forall a. [a] -&gt; Int -&gt; a
+</span><span class="hs-operator hs-var">!!</span></span><span> </span><span class="annot"><span class="hs-number">2</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SqlValue -&gt; FilePath
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[SqlValue]
+</span><a href="#local-6989586621679141355"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">[SqlValue] -&gt; Int -&gt; SqlValue
+forall a. [a] -&gt; Int -&gt; a
+</span><span class="hs-operator hs-var">!!</span></span><span> </span><span class="annot"><span class="hs-number">3</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SqlValue -&gt; Bool
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[SqlValue]
+</span><a href="#local-6989586621679141355"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">[SqlValue] -&gt; Int -&gt; SqlValue
+forall a. [a] -&gt; Int -&gt; a
+</span><span class="hs-operator hs-var">!!</span></span><span> </span><span class="annot"><span class="hs-number">4</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SqlValue -&gt; Bool
+forall a. Convertible SqlValue a =&gt; SqlValue -&gt; a
+</span><span class="hs-identifier hs-var">fromSql</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[SqlValue]
+</span><a href="#local-6989586621679141355"><span class="hs-identifier hs-var">xs</span></a></span><span> </span><span class="annot"><span class="annottext">[SqlValue] -&gt; Int -&gt; SqlValue
+forall a. [a] -&gt; Int -&gt; a
+</span><span class="hs-operator hs-var">!!</span></span><span> </span><span class="annot"><span class="hs-number">5</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[[SqlValue]]
+</span><a href="#local-6989586621679141356"><span class="hs-identifier hs-var">res</span></a></span><span>
+</span><span id="line-178"></span><span>
+</span><span id="line-179"></span><span class="hs-comment">-- | This function converts SQL into JSON</span><span>
+</span><span id="line-180"></span><span class="annot"><a href="Database.html#convertToJSON"><span class="hs-identifier hs-type">convertToJSON</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Connection</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-181"></span><span id="convertToJSON"><span class="annot"><span class="annottext">convertToJSON :: Connection -&gt; IO FilePath
+</span><a href="Database.html#convertToJSON"><span class="hs-identifier hs-var hs-var">convertToJSON</span></a></span></span><span> </span><span id="local-6989586621679141351"><span class="annot"><span class="annottext">conn :: Connection
+</span><a href="#local-6989586621679141351"><span class="hs-identifier hs-var">conn</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-182"></span><span>  </span><span id="local-6989586621679141350"><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141350"><span class="hs-identifier hs-var">res</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Connection -&gt; IO [HolidayRecord]
+</span><a href="Database.html#getUnprocessedSQLHolidays"><span class="hs-identifier hs-var">getUnprocessedSQLHolidays</span></a></span><span> </span><span class="annot"><span class="annottext">Connection
+</span><a href="#local-6989586621679141351"><span class="hs-identifier hs-var">conn</span></a></span><span>
+</span><span id="line-183"></span><span>  </span><span class="annot"><span class="annottext">FilePath -&gt; IO FilePath
+forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
+</span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="annot"><span class="annottext">(FilePath -&gt; IO FilePath) -&gt; FilePath -&gt; IO FilePath
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; FilePath
+</span><span class="hs-identifier hs-var">L8.unpack</span></span><span> </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="annottext">[HolidayRecord] -&gt; ByteString
+forall a. ToJSON a =&gt; a -&gt; ByteString
+</span><span class="hs-identifier hs-var">encode</span></span><span> </span><span class="annot"><span class="annottext">[HolidayRecord]
+</span><a href="#local-6989586621679141350"><span class="hs-identifier hs-var">res</span></a></span><span class="hs-special">)</span></pre></body></html>

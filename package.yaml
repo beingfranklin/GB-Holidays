@@ -41,6 +41,11 @@ executables:
     dependencies:
     - Public-Holidays-of-the-World
 
+build:
+  haddock-arguments:
+    haddock-args:
+    - "--odir=./docs"    
+
 tests:
   Public-Holidays-of-the-World-test:
     main:                Spec.hs

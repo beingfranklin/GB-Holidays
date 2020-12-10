@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE DeriveGeneric #-}</span><span>
+</span><span id="line-2"></span><span class="hs-comment">-- |Parse module header</span><span>
+</span><span id="line-3"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Parse</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-4"></span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString.Lazy.Char8</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">L8</span></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Generics</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span class="hs-comment">-- Sample JSON format</span><span>
+</span><span id="line-10"></span><span class="hs-comment">-- [</span><span>
+</span><span id="line-11"></span><span class="hs-comment">--   {</span><span>
+</span><span id="line-12"></span><span class="hs-comment">--     &quot;date&quot;: &quot;2020-01-01&quot;,</span><span>
+</span><span id="line-13"></span><span class="hs-comment">--     &quot;localName&quot;: &quot;New Year's Day&quot;,</span><span>
+</span><span id="line-14"></span><span class="hs-comment">--     &quot;name&quot;: &quot;New Year's Day&quot;,</span><span>
+</span><span id="line-15"></span><span class="hs-comment">--     &quot;countryCode&quot;: &quot;GB&quot;,</span><span>
+</span><span id="line-16"></span><span class="hs-comment">--     &quot;fixed&quot;: false,</span><span>
+</span><span id="line-17"></span><span class="hs-comment">--     &quot;global&quot;: true,</span><span>
+</span><span id="line-18"></span><span class="hs-comment">--   }</span><span>
+</span><span id="line-19"></span><span class="hs-comment">--   ]</span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span class="hs-comment">-- |HolidayRecord constructor</span><span>
+</span><span id="line-22"></span><span id="local-6989586621679141328"><span id="local-6989586621679141329"></span></span><span class="hs-keyword">data</span><span> </span><span id="HolidayRecord"><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-var">HolidayRecord</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="HolidayRecord"><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-var">HolidayRecord</span></a></span></span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="date"><span class="annot"><span class="annottext">HolidayRecord -&gt; String
+</span><a href="Parse.html#date"><span class="hs-identifier hs-var hs-var">date</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span>
+</span><span id="line-24"></span><span>    </span><span id="localName"><span class="annot"><span class="annottext">HolidayRecord -&gt; String
+</span><a href="Parse.html#localName"><span class="hs-identifier hs-var hs-var">localName</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span>
+</span><span id="line-25"></span><span>    </span><span id="name"><span class="annot"><span class="annottext">HolidayRecord -&gt; String
+</span><a href="Parse.html#name"><span class="hs-identifier hs-var hs-var">name</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span>
+</span><span id="line-26"></span><span>    </span><span id="countryCode"><span class="annot"><span class="annottext">HolidayRecord -&gt; String
+</span><a href="Parse.html#countryCode"><span class="hs-identifier hs-var hs-var">countryCode</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span>
+</span><span id="line-27"></span><span>    </span><span id="global"><span class="annot"><span class="annottext">HolidayRecord -&gt; Bool
+</span><a href="Parse.html#global"><span class="hs-identifier hs-var hs-var">global</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span class="hs-special">,</span><span>
+</span><span id="line-28"></span><span>    </span><span id="fixed"><span class="annot"><span class="annottext">HolidayRecord -&gt; Bool
+</span><a href="Parse.html#fixed"><span class="hs-identifier hs-var hs-var">fixed</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>
+</span><span id="line-29"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-30"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679141315"><span id="local-6989586621679141317"><span id="local-6989586621679141319"><span class="annot"><span class="annottext">Int -&gt; HolidayRecord -&gt; ShowS
+[HolidayRecord] -&gt; ShowS
+HolidayRecord -&gt; String
+(Int -&gt; HolidayRecord -&gt; ShowS)
+-&gt; (HolidayRecord -&gt; String)
+-&gt; ([HolidayRecord] -&gt; ShowS)
+-&gt; Show HolidayRecord
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [HolidayRecord] -&gt; ShowS
+$cshowList :: [HolidayRecord] -&gt; ShowS
+show :: HolidayRecord -&gt; String
+$cshow :: HolidayRecord -&gt; String
+showsPrec :: Int -&gt; HolidayRecord -&gt; ShowS
+$cshowsPrec :: Int -&gt; HolidayRecord -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. HolidayRecord -&gt; Rep HolidayRecord x)
+-&gt; (forall x. Rep HolidayRecord x -&gt; HolidayRecord)
+-&gt; Generic HolidayRecord
+forall x. Rep HolidayRecord x -&gt; HolidayRecord
+forall x. HolidayRecord -&gt; Rep HolidayRecord x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep HolidayRecord x -&gt; HolidayRecord
+$cfrom :: forall x. HolidayRecord -&gt; Rep HolidayRecord x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-31"></span><span>
+</span><span id="line-32"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679141307"><span id="local-6989586621679141309"><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span></span></span><span>
+</span><span id="line-33"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679141298"><span id="local-6989586621679141300"><span id="local-6989586621679141302"><span id="local-6989586621679141304"><span class="annot"><span class="hs-identifier hs-type">ToJSON</span></span><span> </span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span></span></span></span></span><span> </span><span>
+</span><span id="line-34"></span><span>
+</span><span id="line-35"></span><span class="hs-comment">-- | This function is for converting JSON to text </span><span>
+</span><span id="line-36"></span><span class="annot"><a href="Parse.html#parse"><span class="hs-identifier hs-type">parse</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">L8.ByteString</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Either</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-37"></span><span id="parse"><span class="annot"><span class="annottext">parse :: ByteString -&gt; Either String [HolidayRecord]
+</span><a href="Parse.html#parse"><span class="hs-identifier hs-var hs-var">parse</span></a></span></span><span> </span><span id="local-6989586621679141295"><span class="annot"><span class="annottext">json :: ByteString
+</span><a href="#local-6989586621679141295"><span class="hs-identifier hs-var">json</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ByteString -&gt; Either String [HolidayRecord]
+forall a. FromJSON a =&gt; ByteString -&gt; Either String a
+</span><span class="hs-identifier hs-var">eitherDecode</span></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679141295"><span class="hs-identifier hs-var">json</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Either</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Parse.html#HolidayRecord"><span class="hs-identifier hs-type">HolidayRecord</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-38"></span></pre></body></html>
