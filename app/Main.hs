@@ -69,15 +69,16 @@ main = do
           putStrLn $ unlines names
         _ -> syntaxErrorForIsGlobal
       -- TODO More Query
-      putStrLn $ "\nPreparing to write into the JSON file "
+      
+      putStrLn "\nPreparing to write into the JSON file... "
       putStrLn "\nWriting ..."
       jsonValue <- convertToJSON conn
-      writeFile "DB.json" (jsonValue)
+      writeFile "DB.json" jsonValue
       putStrLn "\nFinished Writing!"
 
 
 syntaxErrorForIsGlobal :: IO ()
 syntaxErrorForIsGlobal = putStrLn 
-      "Invalid Input\n\
+      "Invalid Input for the holiday type\n\
       \\n\
-      \Please either enter Y or N\n"
+      \Please either enter Y or N next time\n"

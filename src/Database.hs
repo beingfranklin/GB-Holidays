@@ -134,7 +134,7 @@ holidayToSqlValues countries =
     toSql $ fixed countries
   ]
 
--- |This function performs an action (ie. to insert the values into holidays)
+-- | This function performs an action (ie. to insert the values into holidays)
 
 prepareInsertRecordStmt :: Connection -> IO Statement
 prepareInsertRecordStmt conn = prepare conn "INSERT INTO holidays VALUES (?,?)"
