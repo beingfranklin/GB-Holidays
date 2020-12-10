@@ -3,7 +3,7 @@
 
 
 -- | Please see the README on GitHub at
---   <a>https://github.com/githubuser/Public-Holidays-of-the-World#readme</a>
+--   <a>https://github.com/beingfranklin/Public-Holidays-of-the-World#readme</a>
 @package Public-Holidays-of-the-World
 @version 0.1.0.0
 
@@ -46,11 +46,11 @@ initialiseDB :: IO Connection
 -- | This function will insert the holiday records into the database
 insertDB :: Connection -> [HolidayRecord] -> IO ()
 
--- | This function will insert the country records into the dsatabase
+-- | This function will insert the country records into the database
 insertLB :: Connection -> [HolidayRecord] -> IO ()
 
 -- | This function will insert the country_holidays records into the
---   dsatabase
+--   database
 insertSB :: Connection -> [HolidayRecord] -> IO ()
 
 -- | This function will select all the holidays of a given country

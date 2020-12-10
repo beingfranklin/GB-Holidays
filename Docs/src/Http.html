@@ -9,20 +9,20 @@
 </span><span id="line-9"></span><span class="hs-comment">-- | This function is for converting JSON from URL</span><span>
 </span><span id="line-10"></span><span class="annot"><a href="Http.html#download"><span class="hs-identifier hs-type">download</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">L8.ByteString</span></span><span>
 </span><span id="line-11"></span><span id="download"><span class="annot"><span class="annottext">download :: String -&gt; IO ByteString
-</span><a href="Http.html#download"><span class="hs-identifier hs-var hs-var">download</span></a></span></span><span> </span><span id="local-6989586621679141275"><span class="annot"><span class="annottext">url :: String
-</span><a href="#local-6989586621679141275"><span class="hs-identifier hs-var">url</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-12"></span><span>    </span><span id="local-6989586621679141274"><span class="annot"><span class="annottext">Request
-</span><a href="#local-6989586621679141274"><span class="hs-identifier hs-var">request</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">String -&gt; IO Request
+</span><a href="Http.html#download"><span class="hs-identifier hs-var hs-var">download</span></a></span></span><span> </span><span id="local-6989586621679140257"><span class="annot"><span class="annottext">url :: String
+</span><a href="#local-6989586621679140257"><span class="hs-identifier hs-var">url</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-12"></span><span>    </span><span id="local-6989586621679140256"><span class="annot"><span class="annottext">Request
+</span><a href="#local-6989586621679140256"><span class="hs-identifier hs-var">request</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">String -&gt; IO Request
 forall (m :: * -&gt; *). MonadThrow m =&gt; String -&gt; m Request
 </span><span class="hs-identifier hs-var">parseRequest</span></span><span> </span><span class="annot"><span class="annottext">String
-</span><a href="#local-6989586621679141275"><span class="hs-identifier hs-var">url</span></a></span><span>
-</span><span id="line-13"></span><span>    </span><span id="local-6989586621679141273"><span class="annot"><span class="annottext">Response ByteString
-</span><a href="#local-6989586621679141273"><span class="hs-identifier hs-var">response</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Request -&gt; IO (Response ByteString)
+</span><a href="#local-6989586621679140257"><span class="hs-identifier hs-var">url</span></a></span><span>
+</span><span id="line-13"></span><span>    </span><span id="local-6989586621679140255"><span class="annot"><span class="annottext">Response ByteString
+</span><a href="#local-6989586621679140255"><span class="hs-identifier hs-var">response</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Request -&gt; IO (Response ByteString)
 forall (m :: * -&gt; *).
 MonadIO m =&gt;
 Request -&gt; m (Response ByteString)
 </span><span class="hs-identifier hs-var">httpLBS</span></span><span> </span><span class="annot"><span class="annottext">Request
-</span><a href="#local-6989586621679141274"><span class="hs-identifier hs-var">request</span></a></span><span>
+</span><a href="#local-6989586621679140256"><span class="hs-identifier hs-var">request</span></a></span><span>
 </span><span id="line-14"></span><span>    </span><span class="annot"><span class="annottext">ByteString -&gt; IO ByteString
 forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
 </span><span class="hs-identifier hs-var">return</span></span><span> </span><span class="annot"><span class="annottext">(ByteString -&gt; IO ByteString) -&gt; ByteString -&gt; IO ByteString
@@ -30,6 +30,6 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Response ByteString -&gt; ByteString
 forall a. Response a -&gt; a
 </span><span class="hs-identifier hs-var">getResponseBody</span></span><span> </span><span class="annot"><span class="annottext">Response ByteString
-</span><a href="#local-6989586621679141273"><span class="hs-identifier hs-var">response</span></a></span><span>
+</span><a href="#local-6989586621679140255"><span class="hs-identifier hs-var">response</span></a></span><span>
 </span><span id="line-15"></span><span>
 </span><span id="line-16"></span></pre></body></html>
