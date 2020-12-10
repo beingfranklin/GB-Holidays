@@ -1,8 +1,17 @@
 module Main where
 
 import Database
-import Http
-import Parse
+    ( convertToJSON,
+      getLocalNames,
+      initialiseDB,
+      insertDB,
+      insertLB,
+      insertSB,
+      queryDB,
+      selectHolidaysInDateRange,
+      sqlRowToString )
+import Http ( download )
+import Parse ( parse )
 
 -- | This is the main function of the program to download, parse and process public holidays of differnet countries of the world
 main :: IO ()

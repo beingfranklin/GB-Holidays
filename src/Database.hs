@@ -2,10 +2,16 @@
 module Database where
 
 import Database.HDBC
+    ( fromSql,
+      toSql,
+      quickQuery',
+      SqlValue,
+      Statement(executeMany),
+      IConnection(commit, run, prepare) )
 import qualified Data.ByteString.Lazy.Char8 as L8
-import Database.HDBC.Sqlite3
-import Parse
-import Data.Aeson
+import Database.HDBC.Sqlite3 ( connectSqlite3, Connection )
+import Parse ( HolidayRecord(..) )
+import Data.Aeson ( encode )
 
 {--| 
   Database.HDBC - Database.HDBC is an abstraction layer between Haskell programs 
@@ -68,7 +74,7 @@ insertDB conn records = do
   executeMany stmt (map (\x -> [toSql (date x), toSql (localName x), toSql (name x)]) xs) --  this function use for prepares a database operation and executes it against the parameters sequences
   commit conn --  this fuction to commit a transaction to the underlying database 
 
--- | This function will insert the country records into the dsatabase
+-- | This function will insert the country records into the database
 insertLB :: Connection -> [HolidayRecord] -> IO () 
 insertLB conn records = do
   let xs = records
@@ -76,11 +82,11 @@ insertLB conn records = do
   executeMany stmt (map (\x -> [toSql (countryCode x), toSql (global x), toSql (fixed x)]) xs) --  this function use for prepares a database operation and executes it against the parameters sequences
   commit conn -- this fuction to commit a transaction to the underlying database
 
--- | This function will insert the country_holidays records into the dsatabase
+-- | This function will insert the country_holidays records into the database
 insertSB :: Connection -> [HolidayRecord] -> IO ()
 insertSB conn records = do
   let xs = records
-  stmt <- prepare conn "INSERT INTO country_holidays (countryCode,localName) VALUES (?,?)" -- this fuction use to insert the values into the parameters under the country_holidays
+  stmt <- prepare conn "INSERT INTO country_holidays (countryCode,localName) VALUES (?,?)" -- this function use to insert the values into the parameters under the country_holidays
   executeMany stmt (map (\x -> [toSql (countryCode x), toSql (localName x)]) xs) --  this function use for prepares a database operation and executes it against the parameters sequences
   commit conn --  this function to commit a transaction to the underlying database
 
