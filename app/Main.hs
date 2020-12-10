@@ -78,10 +78,10 @@ main = do
       putStrLn "\n****************"
       putStrLn $ "Number of rows in Table is " ++ show (length res)
       putStrLn "\n****************"
-      -- TODO - JSON Conversion code is below
+      -- | JSON Conversion code is below
       jsonValue <- convertToJSON conn
       print $ show jsonValue
-      -- TODO - JSON Conversion -> writing into file should be added below
+      -- | JSON Conversion -> writing into file should be added below
       writeFile "DB.json" (jsonValue)
       print "Done!"
       putStrLn "\n****************"

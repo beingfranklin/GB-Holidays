@@ -1,12 +1,12 @@
 {-# LANGUAGE DeriveGeneric #-}
-
+-- |Parse module header
 module Parse where
 
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as L8
 import GHC.Generics (Generic)
 
--- |Sample JSON format
+-- Sample JSON format
 -- [
 --   {
 --     "date": "2020-01-01",
@@ -17,6 +17,8 @@ import GHC.Generics (Generic)
 --     "global": true,
 --   }
 --   ]
+
+-- |HolidayRecord
 data HolidayRecord = HolidayRecord
   { date :: String,
     localName :: String,
@@ -30,5 +32,6 @@ data HolidayRecord = HolidayRecord
 instance FromJSON HolidayRecord
 instance ToJSON HolidayRecord 
 
+-- |Parse function for converting JSON to text 
 parse :: L8.ByteString -> Either String [HolidayRecord]
 parse json = eitherDecode json :: Either String [HolidayRecord]
