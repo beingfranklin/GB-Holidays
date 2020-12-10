@@ -18,7 +18,7 @@ import GHC.Generics (Generic)
 --   }
 --   ]
 
--- |HolidayRecord
+-- |HolidayRecord constructor
 data HolidayRecord = HolidayRecord
   { date :: String,
     localName :: String,
@@ -32,6 +32,6 @@ data HolidayRecord = HolidayRecord
 instance FromJSON HolidayRecord
 instance ToJSON HolidayRecord 
 
--- |Parse function for converting JSON to text 
+-- | This function is for converting JSON to text 
 parse :: L8.ByteString -> Either String [HolidayRecord]
 parse json = eitherDecode json :: Either String [HolidayRecord]

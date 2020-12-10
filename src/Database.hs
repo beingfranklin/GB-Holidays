@@ -65,7 +65,6 @@ insertDB :: Connection -> [HolidayRecord] -> IO ()
 insertDB conn records = do
   let xs = records 
   stmt <- prepare conn "INSERT INTO holidays (date,localName,name) VALUES (?,?,?)" --  this fuction use to insert the values into the parameters under the holidays table
-  putStrLn "Adding" --  this fuction to Type for s string with newline character at the end 
   executeMany stmt (map (\x -> [toSql (date x), toSql (localName x), toSql (name x)]) xs) --  this function use for prepares a database operation and executes it against the parameters sequences
   commit conn --  this fuction to commit a transaction to the underlying database 
 
@@ -74,7 +73,6 @@ insertLB :: Connection -> [HolidayRecord] -> IO ()
 insertLB conn records = do
   let xs = records
   stmt <- prepare conn "INSERT INTO countries (countryCode,global,fixed) VALUES (?,?,?)" --  this fuction use to insert the values into the parameters under the country table
-  putStrLn "Adding" --  this fuction to Type for s string with newline character at the end 
   executeMany stmt (map (\x -> [toSql (countryCode x), toSql (global x), toSql (fixed x)]) xs) --  this function use for prepares a database operation and executes it against the parameters sequences
   commit conn -- this fuction to commit a transaction to the underlying database
 
@@ -83,9 +81,8 @@ insertSB :: Connection -> [HolidayRecord] -> IO ()
 insertSB conn records = do
   let xs = records
   stmt <- prepare conn "INSERT INTO country_holidays (countryCode,localName) VALUES (?,?)" -- this fuction use to insert the values into the parameters under the country_holidays
-  putStrLn "Adding" --  this fuction to Type for s string with newline character at the end 
   executeMany stmt (map (\x -> [toSql (countryCode x), toSql (localName x)]) xs) --  this function use for prepares a database operation and executes it against the parameters sequences
-  commit conn --  this fuction to commit a transaction to the underlying database
+  commit conn --  this function to commit a transaction to the underlying database
 
 -- | This function will select all the holidays of a given country
 queryDB :: Connection -> String -> IO [[SqlValue]]
